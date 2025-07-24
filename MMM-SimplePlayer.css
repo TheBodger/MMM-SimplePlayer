@@ -7,3 +7,40 @@
   font-size: 1em;
   padding: 0.5em 1em;
 }
+
+.fa-button {
+  font-size: 24px;
+  margin: 0 10px;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.track-info {
+  display: block;
+  width: 100%; /* or a fixed width like 300px */
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  font-size: 1.2em;
+  border-block-style:solid;
+  border-color:brown;
+}
+
+  .track-info::before {
+    content: attr(data-text);
+    position: absolute;
+    animation: scroll-text 10s linear infinite;
+    padding-left: 100%; /* push start off screen */
+  }
+
+@keyframes scroll-text {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}

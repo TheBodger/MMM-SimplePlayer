@@ -34,42 +34,108 @@ Module.register("MMM-SimplePlayer", {
 			this.config.playlist = payload;
 			if (this.config.autoplay && this.config.playlist.length > 0) {
 				this.audio.src = this.config.playlist[this.currentTrack];
-				this.audio.play();
-				this.isPlaying = true;
 			}
 			this.updateDom();
+			this.audio.volume = 1;
 		}
 	},
 
 	  getStyles: function () {
-		return ["MMM-SimplePlayer.css"];
+		  return ["MMM-SimplePlayer.css",'font-awesome.css'];
 	},
 
 	getDom() {
+
 		const wrapper = document.createElement("div");
 		wrapper.className = "simple-player";
 
+		const eventLog = document.createElement("div");
+		eventLog.id = "eventLog";
+		eventLog.style.maxHeight = "300px";
+		eventLog.style.overflowY = "auto";
+		eventLog.style.border = "1px solid #ccc";
+		eventLog.style.padding = "10px";
+		eventLog.innerHTML = "<strong>Event Log:</strong>";
+		wrapper.appendChild(eventLog);
+
 		this.audio = document.createElement("audio");
+
+		const audioEvents = [
+			'abort', 'canplay', 'canplaythrough', 'durationchange', 'emptied', 'ended',
+			'error', 'loadeddata', 'loadedmetadata', 'loadstart', 'pause', 'play',
+			'playing', 'progress', 'ratechange', 'seeked', 'seeking', 'stalled',
+			'suspend', 'timeupdate', 'volumechange', 'waiting'
+		];
+
+		var preEventType = "";
+
+		// Attach listeners for each event
+		audioEvents.forEach(eventType => {
+			this.audio.addEventListener(eventType, (e) => {
+				if (preEventType === eventType) {
+					return; // Skip if the same event is triggered consecutively
+				}
+				const timestamp = new Date().toLocaleTimeString();
+				const logEntry = document.createElement('div');
+				logEntry.textContent = `${timestamp} — ${eventType}`;
+				preEventType = eventType;
+				eventLog.appendChild(logEntry);
+
+				if (eventType == "loadedmetadata") {
+					this.setTrackInfo();
+				}
+			});
+		});
+
 		this.audio.controls = false;
+		this.audio.volume = 0;
+		this.audio.autoplay = this.config.autoplay;
 		this.audio.src = this.config.playlist[this.currentTrack] || "";
+
 		wrapper.appendChild(this.audio);
+
+		this.isPlaying = this.audio.paused ? false : true;
 
 		const controls = document.createElement("div");
 		controls.className = "controls";
 
-		["Back", "Play/Pause", "Next", "Stop"].forEach(action => {
+		const iconMap = {
+			Back: "fa-backward", "Play/Pause":
+				this.isPlaying ? "fa-pause" : "fa-play",
+			Stop: "fa-stop",
+			Next: "fa-forward",
+		};
+
+		Object.entries(iconMap).forEach(([action, icon]) => {
 			const button = document.createElement("button");
-			button.innerText = action;
+			button.id = action.toLowerCase() + "Button";
+			button.className = "fa-button";
+			button.innerHTML = `<i class="fas ${icon} aria-hidden="true""></i>`;
 			button.addEventListener("click", () => this.handleAction(action));
 			controls.appendChild(button);
 		});
 
 		wrapper.appendChild(controls);
+
+		this.trackInfo = document.createElement("div");
+		this.trackInfo.id = "trackInfo";
+		this.trackInfo.className = "track-info";
+		this.trackInfo.setAttribute("data-text", "Artist - Song Title");
+		this.trackInfo.innerHTML = `<i class="fas fa-music"></i>`;
+
+		wrapper.appendChild(this.trackInfo);
+
 		return wrapper;
 	},
 
 	handleAction(action) {
+		//get the Play/Pause button element so we can change its inner html to the correct icon
+		const playPauseButton = document.getElementById("play/pauseButton");
 		switch (action) {
+			case "play":
+
+				return;
+
 			case "Back":
 				this.currentTrack = (this.currentTrack - 1 + this.config.playlist.length) % this.config.playlist.length;
 				break;
@@ -78,22 +144,36 @@ Module.register("MMM-SimplePlayer", {
 				break;
 			case "Play/Pause":
 				if (this.audio.paused) {
+					this.audio.volume = 1; // Set volume to 1 when playing
 					this.audio.play();
 					this.isPlaying = true;
+					playPauseButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i>';
+					this.setTrackInfo();
+					
 				} else {
 					this.audio.pause();
 					this.isPlaying = false;
+					playPauseButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i>';
 				}
 				return;
 			case "Stop":
 				this.audio.pause();
 				this.audio.currentTime = 0;
 				this.isPlaying = false;
+				playPauseButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i>';
 				return;
 		}
 
 		this.audio.src = this.config.playlist[this.currentTrack];
 		if (this.isPlaying) this.audio.play();
+	},
+
+	setTrackInfo() {
+		if (this.audio.metadata) {
+			this.trackInfo.setAttribute("data-text", `${this.audio.metadata.artist} - ${this.audio.metadata.title}`);
+		} else {
+			this.trackInfo.setAttribute("data-text", "Unknown Artist - Unknown Title");
+		}
 	},
 
 	notificationReceived(notification) {

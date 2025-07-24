@@ -1,0 +1,9 @@
+.simple-player {
+  text-align: center;
+}
+
+.controls button {
+  margin: 0 5px;
+  font-size: 1em;
+  padding: 0.5em 1em;
+}

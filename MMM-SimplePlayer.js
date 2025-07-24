@@ -6,7 +6,8 @@ Module.register("MMM-SimplePlayer", {
 		usePlaylist: false,
 		playlistName: "defaultPlaylist.json",
 		playlist: [],
-		loop: false
+		loop: false,
+		showEvents: false,
 	},
 
 	start() {
@@ -49,15 +50,17 @@ Module.register("MMM-SimplePlayer", {
 		const wrapper = document.createElement("div");
 		wrapper.className = "simple-player";
 
-		const eventLog = document.createElement("div");
-		eventLog.id = "eventLog";
-		eventLog.className = "small";
-		eventLog.style.maxHeight = "300px";
-		eventLog.style.overflowY = "auto";
-		eventLog.style.border = "1px solid #ccc";
-		eventLog.style.padding = "10px";
-		eventLog.innerHTML = "<strong>Event Log:</strong>";
-		wrapper.appendChild(eventLog);
+		if (this.config.showEvents) {
+			const eventLog = document.createElement("div");
+			eventLog.id = "eventLog";
+			eventLog.className = "small";
+			eventLog.style.maxHeight = "300px";
+			eventLog.style.overflowY = "auto";
+			eventLog.style.border = "1px solid #ccc";
+			eventLog.style.padding = "10px";
+			eventLog.innerHTML = "<strong>Event Log:</strong>";
+			wrapper.appendChild(eventLog);
+		}
 
 		this.audio = document.createElement("audio");
 
@@ -70,23 +73,21 @@ Module.register("MMM-SimplePlayer", {
 
 		var preEventType = "";
 
-		// Attach listeners for each event
-		audioEvents.forEach(eventType => {
-			this.audio.addEventListener(eventType, (e) => {
-				if (preEventType === eventType) {
-					return; // Skip if the same event is triggered consecutively
-				}
-				const timestamp = new Date().toLocaleTimeString();
-				const logEntry = document.createElement('div');
-				logEntry.textContent = `${timestamp} — ${eventType}`;
-				preEventType = eventType;
-				eventLog.appendChild(logEntry);
-
-				if (eventType == "loadedmetadata") {
-					this.setTrackInfo();
-				}
+		// Attach listeners for each event if required
+		if (this.config.showEvents) {
+			audioEvents.forEach(eventType => {
+				this.audio.addEventListener(eventType, (e) => {
+					if (preEventType === eventType) {
+						return; // Skip if the same event is triggered consecutively
+					}
+					const timestamp = new Date().toLocaleTimeString();
+					const logEntry = document.createElement('div');
+					logEntry.textContent = `${timestamp} — ${eventType}`;
+					preEventType = eventType;
+					eventLog.appendChild(logEntry);
+				});
 			});
-		});
+		}
 
 		this.audio.controls = false;
 		this.audio.volume = 0;
@@ -134,15 +135,16 @@ Module.register("MMM-SimplePlayer", {
 		const playPauseButton = document.getElementById("play/pauseButton");
 		switch (action) {
 			case "play":
-
 				return;
 
 			case "Back":
 				this.currentTrack = (this.currentTrack - 1 + this.config.playlist.length) % this.config.playlist.length;
 				break;
+
 			case "Next":
 				this.currentTrack = (this.currentTrack + 1) % this.config.playlist.length;
 				break;
+
 			case "Play/Pause":
 				if (this.audio.paused) {
 					this.audio.volume = 1; // Set volume to 1 when playing
@@ -157,6 +159,7 @@ Module.register("MMM-SimplePlayer", {
 					playPauseButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i>';
 				}
 				return;
+
 			case "Stop":
 				this.audio.pause();
 				this.audio.currentTime = 0;
@@ -166,7 +169,11 @@ Module.register("MMM-SimplePlayer", {
 		}
 
 		this.audio.src = this.config.playlist[this.currentTrack];
-		if (this.isPlaying) this.audio.play();
+		if (this.isPlaying)
+		{
+			this.audio.play();
+			playPauseButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i>';
+		}
 	},
 
 	setTrackInfo() {

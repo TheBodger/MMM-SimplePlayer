@@ -51,6 +51,7 @@ Module.register("MMM-SimplePlayer", {
 
 		const eventLog = document.createElement("div");
 		eventLog.id = "eventLog";
+		eventLog.className = "small";
 		eventLog.style.maxHeight = "300px";
 		eventLog.style.overflowY = "auto";
 		eventLog.style.border = "1px solid #ccc";
@@ -97,7 +98,7 @@ Module.register("MMM-SimplePlayer", {
 		this.isPlaying = this.audio.paused ? false : true;
 
 		const controls = document.createElement("div");
-		controls.className = "controls";
+		controls.className = "controls medium";
 
 		const iconMap = {
 			Back: "fa-backward", "Play/Pause":
@@ -119,7 +120,7 @@ Module.register("MMM-SimplePlayer", {
 
 		this.trackInfo = document.createElement("div");
 		this.trackInfo.id = "trackInfo";
-		this.trackInfo.className = "track-info";
+		this.trackInfo.className = "track-info small";
 		this.trackInfo.setAttribute("data-text", "Artist - Song Title");
 		this.trackInfo.innerHTML = `<i class="fas fa-music"></i>`;
 

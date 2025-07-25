@@ -8,6 +8,7 @@ Module.register("MMM-SimplePlayer", {
 		playlist: [],
 		loop: false,
 		showEvents: false,
+		startMuted: false,
 	},
 
 	start() {
@@ -39,7 +40,6 @@ Module.register("MMM-SimplePlayer", {
 				this.audio.src = this.config.playlist[this.currentTrack];
 			}
 			this.updateDom();
-			this.audio.volume = 1;
 		}
 
 		if (notification === "METADATA_RESULT") {
@@ -50,6 +50,18 @@ Module.register("MMM-SimplePlayer", {
 
 	  getStyles: function () {
 		  return ["MMM-SimplePlayer.css",'font-awesome.css'];
+	},
+
+	addLogEntry(msg) {
+		if (!this.config.showEvents) { return };
+		const eventLog = document.getElementById("eventLog");
+		if (!eventLog) {
+			console.error("Event log element not found.");
+			return;
+		}
+		const event = document.createElement("p");
+		event.innerText = msg;
+		eventLog.appendChild(event);
 	},
 
 	getDom() {
@@ -72,34 +84,44 @@ Module.register("MMM-SimplePlayer", {
 		this.audio = document.createElement("audio");
 
 		const audioEvents = [
-			'abort', 'canplay', 'canplaythrough', 'durationchange', 'emptied', 'ended',
-			'error', 'loadeddata', 'loadedmetadata', 'loadstart', 'pause', 'play',
-			'playing', 'progress', 'ratechange', 'seeked', 'seeking', 'stalled',
-			'suspend', 'timeupdate', 'volumechange', 'waiting'
+			{ action: 'abort', required: false }, { action: 'canplay', required: false },
+			{ action: 'canplaythrough', required: false }, { action: 'durationchange', required: false },
+			{ action: 'emptied', required: false }, { action: 'ended', required: false },
+			{ action: 'suspend', required: false }, { action: 'timeupdate', required: false },
+			{ action: 'volumechange', required: true }, { action: 'waiting', required: false },
+			{ action: 'playing', required: true }, { action: 'progress', required: false },
+			{ action: 'ratechange', required: false }, { action: 'seeked', required: false },
+			{ action: 'seeking', required: false }, { action: 'stalled', required: false },
+			{ action: 'error', required: false }, { action: 'loadeddata', required: false },
+			{ action: 'loadedmetadata', required: false }, { action: 'loadstart', required: false },
+			{ action: 'pause', required: true }, { action: 'play', required: false },
 		];
 
 		var preEventType = "";
 
 		// Attach listeners for each event if required
-		if (this.config.showEvents) {
-			audioEvents.forEach(eventType => {
-				this.audio.addEventListener(eventType, (e) => {
-					if (preEventType === eventType) {
-						return; // Skip if the same event is triggered consecutively
-					}
-					const timestamp = new Date().toLocaleTimeString();
-					const logEntry = document.createElement('div');
-					logEntry.textContent = `${timestamp} — ${eventType}`;
-					preEventType = eventType;
-					eventLog.appendChild(logEntry);
-				});
-			});
-		}
+		
+		audioEvents.forEach(eventType => {
 
+			if ((eventType.required && !this.config.showEvents) || this.config.showEvents) {
+
+				this.audio.addEventListener(eventType.action, (e) => {
+					if (this.config.showEvents && !preEventType === eventType)
+					{ 
+						const timestamp = new Date().toLocaleTimeString();
+						this.addLogEntry(`${timestamp} — ${eventType}`);
+						preEventType = eventType;
+					}
+					if (eventType.required) { this.handleAction(eventType.action) }; //only handle actions that are required
+				});
+			}
+		});
+		
 		this.audio.controls = false;
-		this.audio.volume = 0;
+		this.audio.volume = this.config.startMuted ? 0 : 1;
 		this.audio.autoplay = this.config.autoplay;
 		this.audio.src = this.config.playlist[this.currentTrack] || "";
+		this.getTrackInfo(1);
 
 		wrapper.appendChild(this.audio);
 
@@ -109,10 +131,11 @@ Module.register("MMM-SimplePlayer", {
 		controls.className = "controls medium";
 
 		const iconMap = {
-			Back: "fa-backward", "Play/Pause":
-				this.isPlaying ? "fa-pause" : "fa-play",
+			Back: "fa-backward",
+			"Play/Pause": this.isPlaying ? "fa-pause" : "fa-play",
 			Stop: "fa-stop",
 			Next: "fa-forward",
+			Volume: this.audio.volume === 0 ? "fa-volume-off" : this.audio.volume < 0.51 ? "fa-volume-low" : "fa-volume-high",
 		};
 
 		Object.entries(iconMap).forEach(([action, icon]) => {
@@ -137,55 +160,104 @@ Module.register("MMM-SimplePlayer", {
 		return wrapper;
 	},
 
-	handleAction(action) {
+	showPlayPause(action) {
 		//get the Play/Pause button element so we can change its inner html to the correct icon
+
 		const playPauseButton = document.getElementById("play/pauseButton");
+
+		if (action === "playing") {
+			playPauseButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i>';
+		}
+		else if (action === "pause" || action === "Stop") {
+			playPauseButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i>';
+		}
+	},
+
+	handleAction(action) {
+
+		const volumeButton = document.getElementById("volumeButton");
+
 		switch (action) {
-			case "play":
+
+			case "playing":
+				this.showPlayPause(action);
+				this.isPlaying = true;
+				return;
+
+			case "pause":
+				this.showPlayPause(action);
+				this.isPlaying = false;
+				return;
+
+			case "volumechange":
+				if (this.config.showEvents) { this.addLogEntry(`Event volumeChange: ${this.audio.volume}`); }
+				if (this.audio.volume > 0 && this.audio.volume < 0.51) {
+					volumeButton.innerHTML = '<i class="fas fa-volume-low" aria-hidden="true"></i>';
+				}
+				else if (this.audio.volume > 0.5)
+				{
+					volumeButton.innerHTML = '<i class="fas fa-volume-high" aria-hidden="true"></i>';
+				}
+				else
+				{
+					volumeButton.innerHTML = '<i class="fas fa-volume-off" aria-hidden="true"></i>';
+				}
+				return;
+
+			case "Volume":
+			
+				if (this.audio.volume == 0)
+				{
+					this.audio.volume = 0.5; 
+				}
+				else if (this.audio.volume > 0.5)
+				{
+					this.audio.volume = 0;
+				}
+				else
+				{
+					this.audio.volume = 1; 
+				}
 				return;
 
 			case "Back":
 				this.currentTrack = (this.currentTrack - 1 + this.config.playlist.length) % this.config.playlist.length;
-				break;
+				this.audio.src = this.config.playlist[this.currentTrack];
+				this.getTrackInfo(2);
+				return;
 
 			case "Next":
 				this.currentTrack = (this.currentTrack + 1) % this.config.playlist.length;
-				break;
+				this.audio.src = this.config.playlist[this.currentTrack];
+				this.getTrackInfo(3);
+				return;
 
 			case "Play/Pause":
 				if (this.audio.paused) {
-					this.audio.volume = 1; // Set volume to 1 when playing
+					if (this.audio.volume == 0) { this.audio.volume = 0.5; } // Set volume to 0.5 when playing if it was muted
 					this.audio.play();
 					this.isPlaying = true;
-					playPauseButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i>';
-					this.getTrackInfo();
 					
 				} else {
 					this.audio.pause();
 					this.isPlaying = false;
-					playPauseButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i>';
 				}
 				return;
 
 			case "Stop":
 				this.audio.pause();
 				this.audio.currentTime = 0;
+				this.showPlayPause(action);
 				this.isPlaying = false;
-				playPauseButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i>';
 				return;
 		}
 
-		this.audio.src = this.config.playlist[this.currentTrack];
-		this.getTrackInfo();
-
-		if (this.isPlaying)
-		{
-			this.audio.play();
-			playPauseButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i>';
-		}
 	},
 
-	getTrackInfo() {
+	getTrackInfo(id) {
+
+		if (!this.config.paths || !this.config.paths[this.currentTrack]) { return; }
+
 		this.sendSocketNotification("GET_METADATA", this.config.paths[this.currentTrack]);
 	},
 

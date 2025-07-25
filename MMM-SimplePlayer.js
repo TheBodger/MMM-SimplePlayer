@@ -4,7 +4,7 @@ Module.register("MMM-SimplePlayer", {
 		playTracks: true, // play from directory
 		musicDirectory: "/home/pi/MagicMirror/music",
 		usePlaylist: false,
-		playlistName: "defaultPlaylist.json",
+		playlistName: "defaultPlaylist.m3u",
 		playlist: [],
 		loop: false,
 		showEvents: false,
@@ -17,7 +17,7 @@ Module.register("MMM-SimplePlayer", {
 		if (this.config.playTracks) { this.sendNotificationToNodeHelper("SCAN_DIRECTORY", this.config.musicDirectory); }
 
 		else if (this.config.usePlaylist) {
-			this.sendNotificationToNodeHelper("LOAD_PLAYLIST", this.config.playlistName);
+			this.sendNotificationToNodeHelper("LOAD_PLAYLIST", [this.config.musicDirectory,this.config.playlistName]);
 		}
 
 		else {

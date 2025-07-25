@@ -31,14 +31,21 @@ Module.register("MMM-SimplePlayer", {
 	},
 
 	socketNotificationReceived(notification, payload) {
+
 		if (notification === "PLAYLIST_READY") {
-			this.config.playlist = payload;
+			this.config.playlist = payload[0];
+			this.config.paths = payload[1];
 			if (this.config.autoplay && this.config.playlist.length > 0) {
 				this.audio.src = this.config.playlist[this.currentTrack];
 			}
 			this.updateDom();
 			this.audio.volume = 1;
 		}
+
+		if (notification === "METADATA_RESULT") {
+			this.trackInfo.setAttribute("data-text", payload.common.artist + " - " + payload.common.album + " - #" + payload.common.track.no + " - " + payload.common.title);
+		}
+
 	},
 
 	  getStyles: function () {
@@ -151,7 +158,7 @@ Module.register("MMM-SimplePlayer", {
 					this.audio.play();
 					this.isPlaying = true;
 					playPauseButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i>';
-					this.setTrackInfo();
+					this.getTrackInfo();
 					
 				} else {
 					this.audio.pause();
@@ -169,6 +176,8 @@ Module.register("MMM-SimplePlayer", {
 		}
 
 		this.audio.src = this.config.playlist[this.currentTrack];
+		this.getTrackInfo();
+
 		if (this.isPlaying)
 		{
 			this.audio.play();
@@ -176,12 +185,8 @@ Module.register("MMM-SimplePlayer", {
 		}
 	},
 
-	setTrackInfo() {
-		if (this.audio.metadata) {
-			this.trackInfo.setAttribute("data-text", `${this.audio.metadata.artist} - ${this.audio.metadata.title}`);
-		} else {
-			this.trackInfo.setAttribute("data-text", "Unknown Artist - Unknown Title");
-		}
+	getTrackInfo() {
+		this.sendSocketNotification("GET_METADATA", this.config.paths[this.currentTrack]);
 	},
 
 	notificationReceived(notification) {

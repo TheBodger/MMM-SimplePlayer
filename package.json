@@ -1,0 +1,25 @@
+{
+	"name": "Magic-Mirror-Module-SimplePlayer",
+	"version": "1.0.0",
+	"description": "SimplePlayer module for the Magic Mirror.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/TheBodger/MMM-SimplePlayer"
+	},
+	"keywords": [
+		"magic mirror",
+		"smart mirror",
+		"audio player",
+		"module"
+	],
+	"author": "Chris Brooker",
+	"contributors": "https://github.com/TheBodger/MMM-SimplePlayer/graphs/contributors",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/TheBodger/MMM-SimplePlayer/issues"
+	},
+	"homepage": "https://github.com/TheBodger/MMM-SimplePlayer#readme",
+	"dependencies": {
+		"music-metadata": "^11.7.1"
+	}
+}

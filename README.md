@@ -87,7 +87,7 @@ to update this module, use your terminal to:
 
 ### MagicMirror² Configuration
 
-To use this module, add the following minimum configuration block to the END of the modules array in the `config/config.js` file:
+To use this module, add the following minimum configuration block to the modules array in the `config/config.js` file:
 ```js
 		{
 			module: "MMM-SimplePlayer",

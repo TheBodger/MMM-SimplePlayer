@@ -142,7 +142,7 @@ The controls from left to right in the example screenshot above are:
 | `Pause\Play Track`		| Shows Play if the current track isnt playing (autoplay is off or the track has been Paused or Stopped). <BR><BR>Click to start playing from the current position within the track. <BR><BR>If the track is playing then shows Pause. <BR><BR>Click to pause the track, leaving it at the current position. 
 | `Stop Track`		| Click to stop the track playing, leaving it at the start of the Track. 
 | `Next Track`		| Loads the Next track in the list, which will be the first track if the current track was the last track in the list
-| `Set Volume`		| Provides 3 volume level, shows the current volume level. Muted, 50% of volume and 100% of volume.
+| `Set Volume`		| Provides 3 volume level, shows the current volume level. Click to cycle through Muted, 50% of volume and 100% of volume.
 | `(un)Shuffle Tracks`		| If dimmed the track list order is unshuffled, and they qill play in the order found in the folder or playlist. <BR><BR>Click to shuffle the list into a random order. Order should be different each time the list is shuffled. The next track played will be random and may be the same track as just finished. <BR><BR> If highlighed, the list is shuffled<BR><BR>Click to unshuffle back to the original order. If the shuffle config option is true, then after the tracks have been loaded, they will be shuffled. 
 | `Repeat Tracks (On/Off)`		| If dimmed, when the last track ends, playing stops.<BR><BR> Click to turn Repeat on<BR><BR> If highlighed, repeat is on. <BR><BR> Click to turn repeat off.
 

@@ -28,7 +28,7 @@ If tracks are in different formats, such as WMA, then use a conversion tool to c
 
 Modern browsers incorporate various security features that wont load tracks from "unSafe" locations. Different browsers (inclduing Electron) have different interpretations of what is "unSafe" and so tracks in a location playable from one device/interface may be rejected in another combination. 
 
-Some browsers will not Autoplay tracks when MM is first started. In this case, to play the first track, press play. After that, using next and back, which changes the track, tracks will start automatically
+Some browsers will not Autoplay tracks when MM is first started. In this case, to play the first track, press play. After that, track changes will play automatically
 
 If the tracks are on the MagicMirror server, then store them in a folder that is relative to the Main MagicMirror folder (this is the location that MagicMirror is run from). The default location is in a music folder within the MMM-SimplePlayer folder within the modules folder of the MagicMirror implementation.
 

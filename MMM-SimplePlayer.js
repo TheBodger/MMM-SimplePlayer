@@ -10,7 +10,7 @@ Module.register("MMM-SimplePlayer", {
 		playlistOrder: [],//Shuffled/Random ordering of the playlist
 
 		showEvents: false,
-		showMeta: false,
+		showMeta: true,
 
 		startMuted: false,
 		shuffle: false,

@@ -125,7 +125,7 @@ This will show the Simple format of controls (as in example 1 above) which will 
 | `playlistName`                | *Optional* - the playlist to use, either m3u or m3u8 format<br><br> **Possible values:** any valid file name and type.<br> **Default value:** "examplePlaylist.m3u"
 | `showEvents`                | *Optional* - if true, a window showing all events emitted from the player is displayed. Used primarily for debugging purposes <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `showMeta`                | *Optional* - if true, the meta data is loaded from the track and displayed: Artist - Album - Track# - Track title<br><br> **Possible values:** true/false.<br> **Default value:** true
-| `startMuted`                | *Optional* - if true, the volume is set to 0% (muted) when the module loads. <br><br> **Possible values:** true/false.<br> **Default value:** false
+| `startMuted`                | *Optional* - if true, the volume is set to 0% (muted) when the module loads. Otherwise it is set tp 50%<br><br> **Possible values:** true/false.<br> **Default value:** false
 | `shuffle`                | *Optional* - if true, once the tracks are loaded from the folder or playlist, their order is shuffled (see controls). <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `repeat`                | *Optional* - if true, after the last track has ended, all tracks are repeated, in the order determined by any Shuffles (see controls). <br><br> **Possible values:** true/false.<br> **Default value:** false
 

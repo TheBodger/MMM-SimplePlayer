@@ -38,7 +38,7 @@ Module.register("MMM-SimplePlayer", {
 			"Play/Pause": ["fa-play", true],
 			Stop: ["fa-stop", true],
 			Next: ["fa-forward", true],
-			Volume: ["fa-volume-off", true],
+			Volume: [this.config.startMuted ? "fa-volume-off" : "fa-volume-low", true],
 			Shuffle: ["fa-random", this.config.shuffle],
 			Repeat: ["fa-redo", this.config.repeat],
 		};
@@ -100,8 +100,9 @@ Module.register("MMM-SimplePlayer", {
 			return;
 		}
 		const event = document.createElement("p");
+		event.className = "event-log-body";
 		event.innerText = msg;
-		eventLog.appendChild(event);
+		eventLog.prepend(event);
 	},
 
 	getDom() {
@@ -111,17 +112,23 @@ Module.register("MMM-SimplePlayer", {
 
 		if (this.config.showEvents) {
 			const eventLog = document.createElement("div");
-			eventLog.id = "eventLog";
 			eventLog.className = "small";
 			eventLog.style.maxHeight = "300px";
 			eventLog.style.overflowY = "auto";
 			eventLog.style.border = "1px solid #ccc";
-			eventLog.style.padding = "10px";
+			eventLog.style.padding = "5px";
 			eventLog.innerHTML = "<strong>Event Log:</strong>";
+
+			const eventLogBody = document.createElement("div");
+			eventLogBody.id = "eventLog";
+
+			eventLog.appendChild(eventLogBody);
+
 			wrapper.appendChild(eventLog);
 		}
 
 		this.audio = document.createElement("audio");
+		this.audio.id = "audioPlayer";
 
 		const audioEvents = [
 			{ action: 'abort', required: false }, { action: 'canplay', required: false },
@@ -158,7 +165,7 @@ Module.register("MMM-SimplePlayer", {
 		});
 		
 		this.audio.controls = false;
-		this.audio.volume = this.config.startMuted ? 0 : 1;
+		this.audio.volume = this.config.startMuted ? 0 : 0.5;
 		this.audio.autoplay = this.config.autoplay;
 		this.audio.src = this.config.playlist[this.config.playlistOrder[this.currentTrack]] || "";
 		this.getTrackInfo(1);
@@ -169,6 +176,9 @@ Module.register("MMM-SimplePlayer", {
 
 		const controls = document.createElement("div");
 		controls.className = "controls medium";
+		controls.id = "controls";
+
+		if (!this.config.showMeta) { controls.className += this.audio.playing ? " pulsing-border" : " still-border"; }
 
 		Object.entries(this.iconMap).forEach(([action, [icon, unDimmed]]) => {
 			const button = document.createElement("button");
@@ -270,11 +280,13 @@ Module.register("MMM-SimplePlayer", {
 			case "playing":
 				this.showPlayPause(action);
 				this.isPlaying = true;
+				if (!this.config.showMeta) { this.setBorder(); }
 				return;
 
 			case "pause":
 				this.showPlayPause(action);
 				this.isPlaying = false;
+				if (!this.config.showMeta) { this.setBorder(); }
 				return;
 
 			case "volumechange":
@@ -312,12 +324,20 @@ Module.register("MMM-SimplePlayer", {
 				this.currentTrack = (this.currentTrack - 1 + this.config.playlist.length) % this.config.playlist.length;
 				this.audio.src = this.config.playlist[this.config.playlistOrder[this.currentTrack]];
 				this.getTrackInfo(2);
+				//if not autoplay then make sure that the play control is showing the play icon and the track is teeded up ready to go
+				if (!this.config.autoplay) {
+					this.handleAction("Stop");
+				}
 				return;
 
 			case "Next":
 				this.currentTrack = (this.currentTrack + 1) % this.config.playlist.length;
 				this.audio.src = this.config.playlist[this.config.playlistOrder[this.currentTrack]];
 				this.getTrackInfo(3);
+				//if not autoplay then make sure that the play control is showing the play icon and the track is teeded up ready to go
+				if (!this.config.autoplay) {
+					this.handleAction("Stop");
+				}
 				return;
 
 			case "Play/Pause":
@@ -342,12 +362,23 @@ Module.register("MMM-SimplePlayer", {
 
 	},
 
+	setBorder() {
+
+		const controls = document.getElementById("controls");
+
+		//replace the border class old,with new
+
+		controls.classList.replace("still-border", !this.audio.paused ? "pulsing-border" : "still-border")
+		controls.classList.replace("pulsing-border", !this.audio.paused ? "pulsing-border" : "still-border")
+;
+	},
+
 	getTrackInfo(id) {
 
 		if (!this.config.paths || !this.config.paths[this.currentTrack]) { return; }
 
 		if (this.config.showMeta) {
-			this.sendSocketNotification("GET_METADATA", this.config.paths[this.currentTrack]);
+			this.sendSocketNotification("GET_METADATA", this.config.paths[this.config.playlistOrder[this.currentTrack]]);
 		}
 	},
 

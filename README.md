@@ -11,6 +11,13 @@ uses the html audio tag to create a SimplePlayer Div that handles the playing of
 ### Examples:
 
 Screenshots of the Simple layout when not playing, and then music is playing<br>
-![Example of MMM-ModulePosition resizing modules](Screenshot_simple.png?raw=true "Screenshot of simple Controls not playing")<BR>
-test
-![Video of MMM-ModulePosition resizing modules]('Screen Recording 2025-07-26 130129.gif')
+![Example of MMM-SimplePlayer audio player module](Screenshot_simple.png?raw=true "Screenshot of simple Controls not playing")<BR>
+<BR>
+![Video of MMM-SimplePlayer audio player module](g130129.gif)
+<br>
+Showing MetaData (Artist album track# and track title)
+<br>
+![Example of MMM-SimplePlayer audio player module](Screenshot_withMeta.png?raw=true "Screenshot with meta + Controls")<BR>
+Showing Event Viewer (used for debugging)
+<br>
+![Example of MMM-SimplePlayer audio player module](Screenshot_EventViewer.png?raw=true "Screenshot with meta + Controls")<BR>

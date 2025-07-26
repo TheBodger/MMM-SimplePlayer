@@ -65,6 +65,37 @@ track3.mp3
 
 Note that these tracks are in the folder indicated in the musicDirectory config value
 
+##Module Installation and config options
+
+## Dependencies
+
+This module requires music-metadata if meta data is to be displayed.
+
+## Installation
+To install the module, use your terminal to:
+1. Navigate to your MagicMirror's modules folder. If you are using the default installation directory, use the command:<br />`cd ~/MagicMirror/modules`
+2. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-SimplePlayer`
+3. CD to the folder:<br />`CD MMM-SimplePlayer`
+4. Install dependencies:<br />`npm install`
+
+## Update
+to update this module, use your terminal to:
+1. `cd ~/MagicMirror/modules/MMM-SimplePlayer`
+2. `git pull`
+
+## Using the module
+
+### MagicMirror² Configuration
+
+To use this module, add the following minimum configuration block to the END of the modules array in the `config/config.js` file:
+```js
+		{
+			module: "MMM-SimplePlayer",
+			position: "top_left",
+		},
+```
+This will show the Simple format of controls (as in example 1 above) which will play any valid tracks from the folder MMM-SimplePlayer/music
+
 ###Example Config
 
 ```

@@ -4,10 +4,10 @@ Module.register("MMM-SimplePlayer", {
 		playTracks: true, // play from directory
 		musicDirectory: "modules/MMM-SimplePlayer/music",
 		usePlaylist: false,
-		playlistName: "defaultPlaylist.m3u",
+		playlistName: "examplePlaylist.m3u",
 
 		playlist: [],
-		playlistOrder: [],//Shffled/Random ordering of the playlist
+		playlistOrder: [],//Shuffled/Random ordering of the playlist
 
 		showEvents: false,
 		showMeta: false,
@@ -341,14 +341,17 @@ Module.register("MMM-SimplePlayer", {
 				return;
 
 			case "Play/Pause":
-				if (this.audio.paused) {
-					if (this.audio.volume == 0) { this.audio.volume = 0.5; } // Set volume to 0.5 when playing if it was muted
-					this.audio.play();
-					this.isPlaying = true;
-					
-				} else {
-					this.audio.pause();
-					this.isPlaying = false;
+				if (!this.audio.error) {
+					if (this.audio.paused) {
+						if (this.audio.volume == 0) { this.audio.volume = 0.5; } // Set volume to 0.5 when playing if it was muted
+						if (!this.audio.error)
+							this.audio.play();
+						this.isPlaying = true;
+
+					} else {
+						this.audio.pause();
+						this.isPlaying = false;
+					}
 				}
 				return;
 

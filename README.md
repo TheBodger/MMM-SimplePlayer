@@ -137,7 +137,7 @@ The controls from left to right in the example screenshot above are:
 | Control                  | Details
 |------------------------ |--------------
 | `Previous Track`	| Loads the Previous track in the list, which will be the last track if the current track was the first track in the list
-| `Pause\Play Track`		| Shows Play if the current track isnt playing (autoplay is off or the track has been Paused or Stopped). <BR><BR>Click to start playing from the current position within the track. <BR><BR>If the track is playing then shows Pause. <BR><BR>Click to pause the track, leaving it at the current position. 
+| `Pause\Play Track`		| Shows Play if the current track isnt playing (autoplay is off or the track has been Paused or Stopped). <BR><BR>Click to start playing from the current position within the track. <BR><BR>If the track is playing then shows Pause. <BR><BR>Click to pause the track, leaving it at the current position. <BR><BR>If meta data isnt required, then a border will appear around the controls that pulses when a track is playing (example vid above).
 | `Stop Track`		| Click to stop the track playing, leaving it at the start of the Track. 
 | `Next Track`		| Loads the Next track in the list, which will be the first track if the current track was the last track in the list
 | `Set Volume`		| Provides 3 volume level, shows the current volume level.<BR><BR> Click to cycle through Muted, 50% of volume and 100% of volume.

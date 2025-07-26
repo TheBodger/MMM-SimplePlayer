@@ -14,3 +14,6 @@ Screenshots of the Simple layout when not playing, and then music is playing<br>
 ![Example of MMM-SimplePlayer audio player module](Screenshot_simple.png?raw=true "Screenshot of simple Controls not playing")<BR>
 <BR>
 ![Video of MMM-SimplePlayer audio player module](g130129.gif)
+<br>
+Showing MetaData (Artist album track# and track title
+![Example of MMM-SimplePlayer audio player module](Screenshot_withMeta.png?raw=true "Screenshot with meta + Controls")<BR>

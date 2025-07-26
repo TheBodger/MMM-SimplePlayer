@@ -144,6 +144,12 @@ The controls from left to right in the example screenshot above are:
 | `(un)Shuffle Tracks`		| If dimmed the track list order is unshuffled, and they will play in the order found in the folder or playlist. <BR><BR>Click to shuffle the list into a random order. Order should be different each time the list is shuffled. After a shuffle, the next track played will be random and may be the same as the track playing when shuffled.<BR><BR> If highlighed, the list is shuffled<BR><BR>Click to unshuffle back to the original order. <BR><BR>If the shuffle config option is true, then after the tracks have been first loaded as the module starts, they will be then shuffled. 
 | `Repeat Tracks (On/Off)`		| If dimmed, when the last track ends, playing stops.<BR><BR> Click to turn Repeat on<BR><BR> If highlighed, repeat is on. See the repeat option in config for details. <BR><BR> Click to turn repeat off.
 
+## Comments
+
+The module may fail if an invalid file or folder location is included. If the behaviour isnt as expected, check that folders and files are always within a folder path that includes the musicDirectory value. If this doesnt resolve the problem, raise an error report with a copy of the config used, and details of the where the music is, and how the MagicMirror is run and on what OS/platform.
+
+Additional capabilities may be added, including showing Album Images and alternative controls layout.
+
 
 
 

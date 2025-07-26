@@ -133,6 +133,19 @@ This will show the Simple format of controls (as in example 1 above) which will 
 
 ##Controls
 
+![Example of MMM-SimplePlayer audio player module](Screenshot_simple.png?raw=true "Screenshot of simple Controls not playing")<BR>
+
+The controls from left to right in the example screenshot above are:
+
+| `Previous Track`	|
+| `Pause\Play Track`		|
+| `Stop Track`		|
+| `Next Track`		|
+| `Set Volume`		|
+| `(un)Shuffle Tracks`		|
+| `Repeat Tracks (On/Off)`		|
+
+
 
 
 

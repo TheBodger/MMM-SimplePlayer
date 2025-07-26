@@ -2,28 +2,46 @@ Module.register("MMM-SimplePlayer", {
 	defaults: {
 		autoplay: false,
 		playTracks: true, // play from directory
-		musicDirectory: "/home/pi/MagicMirror/music",
+		musicDirectory: "modules/MMM-SimplePlayer/music",
 		usePlaylist: false,
 		playlistName: "defaultPlaylist.m3u",
+
 		playlist: [],
-		loop: false,
+		playlistOrder: [],//Shffled/Random ordering of the playlist
+
 		showEvents: false,
+		showMeta: false,
+
 		startMuted: false,
+		shuffle: false,
+		repeat:false,
 	},
 
 	start() {
+
 		this.currentTrack = 0;
 		this.isPlaying = false;
 
 		if (this.config.playTracks) { this.sendNotificationToNodeHelper("SCAN_DIRECTORY", this.config.musicDirectory); }
 
-		else if (this.config.usePlaylist) {
+		else if (this.config.usePlaylist)
+		{
 			this.sendNotificationToNodeHelper("LOAD_PLAYLIST", [this.config.musicDirectory,this.config.playlistName]);
 		}
-
-		else {
+		else
+		{
 			this.config.playlist = [];
 		}
+
+		this.iconMap = {
+			Back: ["fa-backward", true],
+			"Play/Pause": ["fa-play", true],
+			Stop: ["fa-stop", true],
+			Next: ["fa-forward", true],
+			Volume: ["fa-volume-off", true],
+			Shuffle: ["fa-random", this.config.shuffle],
+			Repeat: ["fa-redo", this.config.repeat],
+		};
 
 	},
 
@@ -36,9 +54,12 @@ Module.register("MMM-SimplePlayer", {
 		if (notification === "PLAYLIST_READY") {
 			this.config.playlist = payload[0];
 			this.config.paths = payload[1];
+			this.radomisePlaylist(this.config.shuffle);
+
 			if (this.config.autoplay && this.config.playlist.length > 0) {
-				this.audio.src = this.config.playlist[this.currentTrack];
+				this.audio.src = this.config.playlist[this.config.playlistOrder[this.currentTrack]];
 			}
+
 			this.updateDom();
 		}
 
@@ -48,7 +69,26 @@ Module.register("MMM-SimplePlayer", {
 
 	},
 
-	  getStyles: function () {
+	radomisePlaylist: function (shuffle)
+	{
+		//setup the play order as 0 - n initially
+
+		for (let i = 0; i < this.config.playlist.length; i++)
+		{
+			this.config.playlistOrder[i] = i;
+		}
+
+		//now randomise if needed
+		//use a seedable random function to shuffle the playlist
+
+		if (shuffle)
+		{
+			this.config.playlistOrder = this.seededShuffleRange(0, this.config.playlist.length-1)
+		}
+
+	},
+
+	getStyles: function () {
 		  return ["MMM-SimplePlayer.css",'font-awesome.css'];
 	},
 
@@ -86,7 +126,7 @@ Module.register("MMM-SimplePlayer", {
 		const audioEvents = [
 			{ action: 'abort', required: false }, { action: 'canplay', required: false },
 			{ action: 'canplaythrough', required: false }, { action: 'durationchange', required: false },
-			{ action: 'emptied', required: false }, { action: 'ended', required: false },
+			{ action: 'emptied', required: false }, { action: 'ended', required: true },
 			{ action: 'suspend', required: false }, { action: 'timeupdate', required: false },
 			{ action: 'volumechange', required: true }, { action: 'waiting', required: false },
 			{ action: 'playing', required: true }, { action: 'progress', required: false },
@@ -103,16 +143,16 @@ Module.register("MMM-SimplePlayer", {
 		
 		audioEvents.forEach(eventType => {
 
-			if ((eventType.required && !this.config.showEvents) || this.config.showEvents) {
+			if (eventType.required || this.config.showEvents) {
 
 				this.audio.addEventListener(eventType.action, (e) => {
-					if (this.config.showEvents && !preEventType === eventType)
+					if (this.config.showEvents && !(preEventType == eventType.action))
 					{ 
 						const timestamp = new Date().toLocaleTimeString();
-						this.addLogEntry(`${timestamp} — ${eventType}`);
-						preEventType = eventType;
+						this.addLogEntry(`${timestamp} — ${eventType.action}`);
 					}
-					if (eventType.required) { this.handleAction(eventType.action) }; //only handle actions that are required
+					preEventType = eventType.action;
+					if (eventType.required) { this.handleAction(eventType.action); } //only handle actions that are required
 				});
 			}
 		});
@@ -120,7 +160,7 @@ Module.register("MMM-SimplePlayer", {
 		this.audio.controls = false;
 		this.audio.volume = this.config.startMuted ? 0 : 1;
 		this.audio.autoplay = this.config.autoplay;
-		this.audio.src = this.config.playlist[this.currentTrack] || "";
+		this.audio.src = this.config.playlist[this.config.playlistOrder[this.currentTrack]] || "";
 		this.getTrackInfo(1);
 
 		wrapper.appendChild(this.audio);
@@ -130,32 +170,30 @@ Module.register("MMM-SimplePlayer", {
 		const controls = document.createElement("div");
 		controls.className = "controls medium";
 
-		const iconMap = {
-			Back: "fa-backward",
-			"Play/Pause": this.isPlaying ? "fa-pause" : "fa-play",
-			Stop: "fa-stop",
-			Next: "fa-forward",
-			Volume: this.audio.volume === 0 ? "fa-volume-off" : this.audio.volume < 0.51 ? "fa-volume-low" : "fa-volume-high",
-		};
-
-		Object.entries(iconMap).forEach(([action, icon]) => {
+		Object.entries(this.iconMap).forEach(([action, [icon, unDimmed]]) => {
 			const button = document.createElement("button");
 			button.id = action.toLowerCase() + "Button";
 			button.className = "fa-button";
-			button.innerHTML = `<i class="fas ${icon} aria-hidden="true""></i>`;
 			button.addEventListener("click", () => this.handleAction(action));
+			this.setupButton(action, icon, unDimmed, button); //pass button as it may not be available yet
+			var x = 1;
 			controls.appendChild(button);
 		});
 
 		wrapper.appendChild(controls);
 
-		this.trackInfo = document.createElement("div");
-		this.trackInfo.id = "trackInfo";
-		this.trackInfo.className = "track-info small";
-		this.trackInfo.setAttribute("data-text", "Artist - Song Title");
-		this.trackInfo.innerHTML = `<i class="fas fa-music"></i>`;
+		if (this.config.showMeta)
+		{
 
-		wrapper.appendChild(this.trackInfo);
+			this.trackInfo = document.createElement("div");
+			this.trackInfo.id = "trackInfo";
+			this.trackInfo.className = "track-info small";
+			this.trackInfo.setAttribute("data-text", "Artist - Song Title");
+			this.trackInfo.innerHTML = `<i class="fas fa-music"></i>`;
+
+			wrapper.appendChild(this.trackInfo);
+
+		}
 
 		return wrapper;
 	},
@@ -173,11 +211,61 @@ Module.register("MMM-SimplePlayer", {
 		}
 	},
 
+	setupButton(action, icon, unDimmed, buttonElement) {
+
+		//if button element passed always use it
+
+		if (buttonElement) {
+			buttonT = buttonElement;
+		}
+		else
+		{
+			var buttonT = document.getElementById(action.toLowerCase() + "Button");
+		}
+
+		buttonT.innerHTML = `<i class="fas ${icon} ${unDimmed ? "" : "dimmedButton"}" aria-hidden="true"></i>`;
+
+	},
+
 	handleAction(action) {
+
+		if (this.config.showEvents) { this.addLogEntry(`Handling: ${action}`); }
 
 		const volumeButton = document.getElementById("volumeButton");
 
 		switch (action) {
+
+			case "ended":
+				//play the next track in the playlist, if at end start again if repeat is enabled
+
+				if (this.currentTrack + 1 >= this.config.playlist.length) {
+					if (this.config.repeat) {
+						this.handleAction("Next");
+					}
+					else {
+						this.currentTrack = 0; //reset to the first track
+					}
+				}
+				else
+				{
+					this.handleAction("Next");
+				}
+
+				return;
+
+			case "Shuffle":
+				// Toggles the shuffle mode, and randomises the playlist if shuffle is now enabled
+				this.config.shuffle = !this.config.shuffle;
+				this.radomisePlaylist(this.config.shuffle);
+				if (this.config.showEvents) { this.addLogEntry(`Handling: ${this.config.playlistOrder}`); }
+				this.setupButton(action, this.iconMap[action][0], this.config.shuffle,null);
+				return;
+
+			case "Repeat":
+				// Toggles the repeat mode
+				this.config.repeat = !this.config.repeat;
+				this.setupButton(action, this.iconMap[action][0], this.config.repeat,null);
+				return;
 
 			case "playing":
 				this.showPlayPause(action);
@@ -222,13 +310,13 @@ Module.register("MMM-SimplePlayer", {
 
 			case "Back":
 				this.currentTrack = (this.currentTrack - 1 + this.config.playlist.length) % this.config.playlist.length;
-				this.audio.src = this.config.playlist[this.currentTrack];
+				this.audio.src = this.config.playlist[this.config.playlistOrder[this.currentTrack]];
 				this.getTrackInfo(2);
 				return;
 
 			case "Next":
 				this.currentTrack = (this.currentTrack + 1) % this.config.playlist.length;
-				this.audio.src = this.config.playlist[this.currentTrack];
+				this.audio.src = this.config.playlist[this.config.playlistOrder[this.currentTrack]];
 				this.getTrackInfo(3);
 				return;
 
@@ -258,12 +346,43 @@ Module.register("MMM-SimplePlayer", {
 
 		if (!this.config.paths || !this.config.paths[this.currentTrack]) { return; }
 
-		this.sendSocketNotification("GET_METADATA", this.config.paths[this.currentTrack]);
+		if (this.config.showMeta) {
+			this.sendSocketNotification("GET_METADATA", this.config.paths[this.currentTrack]);
+		}
 	},
 
 	notificationReceived(notification) {
 		if (notification === "PAGE_CHANGED") {
 			this.updateDom();
 		}
+	},
+
+	seededShuffleRange(a, b, seed = Date.now()) {
+		// Generate range of integers
+		const range = Array.from({ length: b - a + 1 }, (_, i) => a + i);
+
+		// Simple seedable random number generator (Mulberry32)
+		function mulberry32(s) {
+			return function ()
+			{
+				s |= 0;
+				s = s + 0x6D2B79F5 | 0;
+				let t = Math.imul(s ^ s >>> 15, 1 | s);
+				t = t + (t >>> 7) | 0;
+				return ((t ^ t >>> 14) >>> 0) / 4294967296;
+			};
+		}
+
+		// Shuffle using the seeded RNG
+		const random = mulberry32(seed);
+
+		for (let i = range.length - 1; i > 0; i--) {
+			const j = Math.floor(random() * (i + 1));
+			[range[i], range[j]] = [range[j], range[i]];
+		}
+
+		return range;
+
 	}
+
 });

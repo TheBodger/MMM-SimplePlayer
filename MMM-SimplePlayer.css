@@ -17,6 +17,10 @@
   cursor: pointer;
 }
 
+.dimmedButton {
+  opacity: 0.5;
+}
+
 .track-info {
   display: block;
   width: 100%; /* or a fixed width like 300px */

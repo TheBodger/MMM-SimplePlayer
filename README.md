@@ -65,7 +65,7 @@ track2.mp3
 track3.mp3
 ```
 
-Note that these tracks are in the folder indicated in the musicDirectory config value
+Note that in this example these tracks are in the folder indicated in the musicDirectory config value
 
 ##Module Installation and config options
 

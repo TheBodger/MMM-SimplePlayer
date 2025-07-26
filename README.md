@@ -136,7 +136,8 @@ This will show the Simple format of controls (as in example 1 above) which will 
 ![Example of MMM-SimplePlayer audio player module](Screenshot_simple.png?raw=true "Screenshot of simple Controls not playing")<BR>
 
 The controls from left to right in the example screenshot above are:
-
+| Control                  | Details
+|------------------------ |--------------
 | `Previous Track`	| Loads the Previous track in the list, which will be the last track if the current track was the first track in the list
 | `Pause\Play Track`		| Shows Play if the current track isnt playing (autoplay is off or the track has been Paused or Stopped). <BR><BR>Click to start playing from the current position within the track. <BR><BR>If the track is playing then shows Pause. <BR><BR>Click to pause the track, leaving it at the current position. 
 | `Stop Track`		| Click to stop the track playing, leaving it at the start of the Track. 

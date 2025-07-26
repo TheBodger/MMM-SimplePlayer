@@ -36,7 +36,7 @@ If using a playlist, then the tracks within the playlist should either refer to 
 
 ###Playlist formats
 
-Playlists in the standard m3u or m3u8 format are supported. For local tracks make sure that the track is referenced in a relative way (i.e. it shouldnt start with \ or /) and that is is within or the folder or subfolder indicated by the folders in the musicDirectory config entry, see examples below.
+Playlists in the standard m3u or m3u8 format are supported. For local tracks make sure that the track is referenced in a relative way (i.e. it shouldnt start with \ or /) and that is is within the folder or a subfolder of musicDirectory config entry, see examples below.
 
 If the tracks are from a webserver, then they should start with HTTP:// or HTTPS://
 

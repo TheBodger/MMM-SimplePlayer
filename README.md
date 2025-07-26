@@ -42,19 +42,47 @@ There are many tools available to build a standard playlist. Microsofts Legacy M
 
 ###Example Playlist - from DLNA server, created using MMP
 
+```
 #EXTM3U
 #EXTINF:0,34155.mp3?WMContentFeatures=DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000&WMHME=1&WMDuration=4010000000&WMHMETitle=RABvAG4AJwB0ACAAVwBvAHIAcgB5AA==
-http://192.168.1.39:50002/m/MP3/34155.mp3?WMContentFeatures=DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000&WMHME=1&WMDuration=4010000000&WMHMETitle=RABvAG4AJwB0ACAAVwBvAHIAcgB5AA==
+http://199.169.9.99:50002/m/MP3/34155.mp3?WMContentFeatures=DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000&WMHME=1&WMDuration=4010000000&WMHMETitle=RABvAG4AJwB0ACAAVwBvAHIAcgB5AA==
 
 #EXTINF:0,34282.mp3?WMContentFeatures=DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000&WMHME=1&WMDuration=2460000000&WMHMETitle=QgBlAGEAdAAgADUANAAgACgAQQBsAGwAIABHAG8AbwBkACAATgBvAHcAKQA=
-http://192.168.1.39:50002/m/MP3/34282.mp3?WMContentFeatures=DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000&WMHME=1&WMDuration=2460000000&WMHMETitle=QgBlAGEAdAAgADUANAAgACgAQQBsAGwAIABHAG8AbwBkACAATgBvAHcAKQA=
+http://199.169.9.99:50002/m/MP3/34282.mp3?WMContentFeatures=DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000&WMHME=1&WMDuration=2460000000&WMHMETitle=QgBlAGEAdAAgADUANAAgACgAQQBsAGwAIABHAG8AbwBkACAATgBvAHcAKQA=
+```
 
 ###Example Playlist - using local files
 
+```
+#EXTM3U
 #EXTINF:0
-01 Soldier of Love [CD]-converted.mp3
+track1.mp3
+#EXTINF:0
+track2.mp3
+#EXTINF:0
+track3.mp3
+```
 
-Note that this track is in the folder indicated in the musicDirectory
+Note that these tracks are in the folder indicated in the musicDirectory config value
+
+###Example Config
+
+```
+{
+	module: "MMM-SimplePlayer",
+	position: "top_left",
+	config: {
+		autoplay: true, 
+		playTracks: false, //Means eithe play from the directory or not, must be false to use the playlist
+		musicDirectory: "modules/MMM-SimplePlayer/music",
+		usePlaylist: true,
+		playlistName: "examplePlaylist.m3u",
+		showEvents: false,
+		showMeta: true,
+		startMuted: false,
+	}
+},
+```
 
 
 

@@ -30,9 +30,9 @@ Modern browsers incorporate various security features that wont load tracks from
 
 Some browsers will not Autoplay tracks when MM is first started. In this case, to play the first track, press play. After that, track changes will play automatically
 
-If the tracks are on the MagicMirror server, then store them in a folder that is relative to the Main MagicMirror folder (this is the location that MagicMirror is run from). The default location is in a music folder within the MMM-SimplePlayer folder within the modules folder of the MagicMirror implementation.
+If the tracks are on the MagicMirror server, then store them in a folder that is relative to the musicDirectory folderpath. The default location is in a music folder within the MMM-SimplePlayer folder within the modules folder of the MagicMirror implementation.
 
-If using a playlist, then the tracks within the playlist shoudl either refer to the same or similar folder within the MagicMirror folder structure and/or be streamed from a web server. DLNA servers make a good source as they can be anywhere on your network. 
+If using a playlist, then the tracks within the playlist should either refer to the same or similar folder within the MagicMirror folder structure and/or be streamed from a web server. DLNA servers make a good source as they can be anywhere on your network. 
 
 ###Playlist formats
 

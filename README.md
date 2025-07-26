@@ -28,6 +28,8 @@ If tracks are in different formats, such as WMA, then use a conversion tool to c
 
 Modern browsers incorporate various security features that wont load tracks from "unSafe" locations. Different browsers (inclduing Electron) have different interpretations of what is "unSafe" and so tracks in a location playable from one device/interface may be rejected in another combination. 
 
+Some browsers will not Autoplay tracks when MM is first started. In this case, to play the first track, press play. After that, using next and back, which changes the track, tracks will start automatically
+
 If the tracks are on the MagicMirror server, then store them in a folder that is relative to the Main MagicMirror folder (this is the location that MagicMirror is run from). The default location is in a music folder within the MMM-SimplePlayer folder within the modules folder of the MagicMirror implementation.
 
 If using a playlist, then the tracks within the playlist shoudl either refer to the same or similar folder within the MagicMirror folder structure and/or be streamed from a web server. DLNA servers make a good source as they can be anywhere on your network. 
@@ -98,7 +100,7 @@ This will show the Simple format of controls (as in example 1 above) which will 
 
 ###Example Config
 
-```
+```js
 {
 	module: "MMM-SimplePlayer",
 	position: "top_left",
@@ -114,7 +116,22 @@ This will show the Simple format of controls (as in example 1 above) which will 
 	}
 },
 ```
+## Configuration Options
 
+| Option                  | Details
+|------------------------ |--------------
+| `autoplay`                | *Optional* - if true, whenever a new track is requested (Next, Previous, First load of MM) it will automatically start (see security and track location above)<br><br> **Possible values:** true/false.<br> **Default value:** false
+| `playTracks`                | *Optional* - if true, the musicDirectory is searched for valid tracks, and available to play. Must be false to use the playlist option<br><br> **Possible values:** true/false.<br> **Default value:** true
+| `musicDirectory`                | *Optional* - the musicDirectory contains a relative folder path to the MagicMirror main location which is searched for tracks, playlists, and any local tracks referenced in a playlist<br><br> **Possible values:** any valid relative folder path.<br> **Default value:** "modules/MMM-SimplePlayer/music"
+| `usePlaylist`                | *Optional* - if true, the musicDirectory is searched for the named playlist and the tracks within it are made to play. <br><br> **Possible values:** true/false.<br> **Default value:** false
+| `playlistName`                | *Optional* - the playlist to use, either m3u or m3u8 format<br><br> **Possible values:** any valid relative folder path.<br> **Default value:** "examplePlaylist.m3u"
+| `showEvents`                | *Optional* - if true, a window showing all events emitted from the player. Used primarily for debugging purposes <br><br> **Possible values:** true/false.<br> **Default value:** false
+| `showMeta`                | *Optional* - if true, the meta data is loaded from the track and displayed: Artist - Album - Track# - Track title<br><br> **Possible values:** true/false.<br> **Default value:** true
+| `startMuted`                | *Optional* - if true, the volume is set to 0% (muted) when the module loads. <br><br> **Possible values:** true/false.<br> **Default value:** false
+| `shuffle`                | *Optional* - if true, once the tracks are loaded from the folder or playlist, their order is shuffled (see controls). <br><br> **Possible values:** true/false.<br> **Default value:** false
+| `repeat`                | *Optional* - if true, after the last track has ended, all tracks are repeated, in the order determined by any Shuffles (see controls). <br><br> **Possible values:** true/false.<br> **Default value:** false
+
+##Controls
 
 
 

@@ -34,11 +34,11 @@ If using a playlist, then the tracks within the playlist shoudl either refer to 
 
 ###Playlist formats
 
-Playlists in the standard m3u or m3u8 format are supported. For local tracks make sure that the track is referenced in a relative way (i.e. it shouldnt start with \ or /), see examples below.
+Playlists in the standard m3u or m3u8 format are supported. For local tracks make sure that the track is referenced in a relative way (i.e. it shouldnt start with \ or /) and that is is within or the folder or subfolder indicated by the folders in the musicDirectory config entry, see examples below.
 
 If the tracks are from a webserver, then they should start with HTTP:// or HTTPS://
 
-There are many tools available to build a standard playlist. Microsofts Legacy Media player (MMP) can easily add tracks from a DLNA server into a playlist, that can then be saved in m£u format.
+There are many tools available to build a standard playlist. Microsofts Legacy Media player (MMP) can easily add tracks from a DLNA server into a playlist, that can then be saved in m3u format.
 
 ###Example Playlist - from DLNA server, created using MMP
 
@@ -50,6 +50,11 @@ http://192.168.1.39:50002/m/MP3/34155.mp3?WMContentFeatures=DLNA.ORG_PN=MP3;DLNA
 http://192.168.1.39:50002/m/MP3/34282.mp3?WMContentFeatures=DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000&WMHME=1&WMDuration=2460000000&WMHMETitle=QgBlAGEAdAAgADUANAAgACgAQQBsAGwAIABHAG8AbwBkACAATgBvAHcAKQA=
 
 ###Example Playlist - using local files
+
+#EXTINF:0
+01 Soldier of Love [CD]-converted.mp3
+
+Note that this track is in the folder indicated in the musicDirectory
 
 
 

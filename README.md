@@ -77,7 +77,7 @@ This module requires music-metadata if meta data is to be displayed.
 To install the module, use your terminal to:
 1. Navigate to your MagicMirror's modules folder. If you are using the default installation directory, use the command:<br />`cd ~/MagicMirror/modules`
 2. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-SimplePlayer`
-3. CD to the folder:<br />`CD MMM-SimplePlayer`
+3. cd to the folder:<br />`cd MMM-SimplePlayer`
 4. Install dependencies:<br />`npm install`
 
 ### Update

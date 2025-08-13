@@ -1,0 +1,5 @@
+<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns:sec="http://www.sec.co.kr/" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">
+  <item id="40$@15943" parentID="40$3742" restricted="1">
+    \n<dc:title>img848</dc:title>\n<upnp:class>object.item.imageItem.photo</upnp:class>\n<upnp:album>1998</upnp:album><res  protocolInfo="http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_LRG;DLNA.ORG_OP=01;DLNA.ORG_FLA…">http://192.168.1.39:50002/p/JPEG_LRG/15959.jpg</res><res  protocolInfo="http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_SM;DLNA.ORG_OP=01;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=00f00000000000000000000000000000" resolution="640x412">http://192.168.1.39:50002/bp/JPEG_SM/15959.jpg</res><res  protocolInfo="http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=00f00000000000000000000000000000" resolution="120x78">http://192.168.1.39:50002/sp/JPEG_TN/15959.jpg</res>
+  </item>
+</DIDL-Lite>

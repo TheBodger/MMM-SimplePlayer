@@ -1,5 +1,18 @@
 .simple-player {
-  text-align: center;
+  text-align: center; 
+}
+
+.muted-background::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  filter: grayscale(60%) brightness(70%);
+  z-index: 0;
+}
+
+.muted-background > * {
+  position: relative;
+  z-index: 1;
 }
 
 .controls button {
@@ -29,22 +42,24 @@
 .track-info {
   display: block;
   width: 100%; /* or a fixed width like 300px */
-  overflow: hidden;
+  overflow:clip;
   white-space: nowrap;
   position: relative;
   font-size: 1.2em;
   border-block-style:solid;
   border-color:brown;
+  box-sizing:border-box;
 }
 
   .track-info::before {
     content: attr(data-text);
+    display: inline-block;
     position: absolute;
-    animation: scroll-text 10s linear infinite;
-    padding-left: 100%; /* push start off screen */
+    animation: keyframes 10s linear infinite;
+    padding-left: 50%; /* push start off screen */
   }
 
-@keyframes scroll-text {
+@keyframes keyframes {
   0% {
     transform: translateX(0%);
   }
@@ -80,4 +95,37 @@
   100% {
     box-shadow: 0 0 0 0 rgba(0, 188, 212, 0);
   }
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position above button */
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip-container.show-tooltip .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }

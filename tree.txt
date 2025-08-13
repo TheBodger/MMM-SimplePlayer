@@ -1,0 +1,16 @@
+tree:
+
+server:
+  treenodes:
+    node:
+      children
+
+treenode[0] = server, id = -1
+
+treenode[0].children = (music,photo,video)
+
+scroll right,  return the children of the current node, id -1, children = .....
+
+scroll left, return the children of parents, parent
+
+UNLESS parent is node[0] then just return parent

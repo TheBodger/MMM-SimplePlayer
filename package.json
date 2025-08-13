@@ -20,6 +20,9 @@
 	},
 	"homepage": "https://github.com/TheBodger/MMM-SimplePlayer#readme",
 	"dependencies": {
-		"music-metadata": "^11.7.1"
+		"music-metadata": "^11.7.1",
+		"xmldom": "^0.6.0",
+		"node-ssdp-js": "^0.9.6",
+		"dlna-browser-utils": "^0.0.2"
 	}
 }

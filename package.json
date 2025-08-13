@@ -22,7 +22,6 @@
 	"dependencies": {
 		"music-metadata": "^11.7.1",
 		"xmldom": "^0.6.0",
-		"node-ssdp-js": "^0.9.6",
-		"xmlbuilder": "^15.1.1"
+		"node-ssdp-js": "^0.9.6"
 	}
 }

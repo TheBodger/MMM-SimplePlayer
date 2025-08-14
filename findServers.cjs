@@ -13,6 +13,8 @@ const browseServer = require('./DLNAUtils/DLNA-Browser.js');
 
 const client = new Client();
 
+var debug = false;
+
 class TreeNode {
   constructor(id, name, art, URL, contentType, content, parentId) {
     this.id = id;
@@ -360,7 +362,7 @@ function getChildren(server, parentID, callback) {
 }
 
 function listFolderContents(folderId, ftitle, controlUrl, callback) {
-  console.log(`Listing contents of folder: ${folderId} (${ftitle}) at ${controlUrl}`);
+  if (debug) console.log(`Listing contents of folder: ${folderId} (${ftitle}) at ${controlUrl}`);
   if (folderId < 0) { folderId = "0"; }
   browseServer(folderId, controlUrl, {}, (err, result) => {
     if (err) return callback(err, folderId);
@@ -442,4 +444,6 @@ function listFolderContents(folderId, ftitle, controlUrl, callback) {
   });
 }
 
-module.exports = { findServers, stopFindingServers, FolderTree, Media, getControlDetails, getChildren, listFolderContents, getNodeChildren, allValuesTrue };
+function setDebug(debugValue) { debug = debugValue; }
+
+module.exports = { setDebug,findServers, stopFindingServers, FolderTree, Media, getControlDetails, getChildren, listFolderContents, getNodeChildren, allValuesTrue };

@@ -22,9 +22,12 @@ Module.register("MMM-SimplePlayer", {
 		shuffle: false,
 		repeat: false,
 		supportedAudioExt: ['MP3', 'WAV', 'OGG'],
+		debug: false,
 	},
 
 	start() {
+
+		this.sendNotificationToNodeHelper("CONFIG", { config: { debug: this.config.debug } });
 
 		this.currentTrack = 0;
 		this.isPlaying = false;
@@ -185,7 +188,7 @@ Module.register("MMM-SimplePlayer", {
 		if (!this.config.showEvents) { return };
 		const eventLog = document.getElementById("eventLogbody");
 		if (!eventLog) {
-			console.error("Event log element not found.");
+			if (this.config.debug) console.error("Event log element not found.");
 			return;
 		}
 		const event = document.createElement("p");
@@ -238,7 +241,7 @@ Module.register("MMM-SimplePlayer", {
 
 	getDom() {
 
-		console.log("GetDom");
+		if (this.config.debug) console.log("GetDom");
 
 		const wrapper = document.createElement("div");
 		wrapper.className = "simple-player";

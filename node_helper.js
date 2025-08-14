@@ -4,7 +4,7 @@ const NodeHelper = require("node_helper");
 const fs = require("fs");
 const path = require("path");
 
-const { findServers, stopFindingServers, FolderTree, getNodeChildren, allValuesTrue, Media } = require('./findServers.cjs');
+const { setDebug, findServers, stopFindingServers, FolderTree, getNodeChildren, allValuesTrue, Media } = require('./findServers.cjs');
 
 var self = null;
 
@@ -35,6 +35,12 @@ module.exports = NodeHelper.create({
 	socketNotificationReceived(notification, payload)
 	{
 		if (payload && payload.returnPlaylist) { this.DLNAShowing = payload.returnPlaylist };
+
+		if (notification === "CONFIG") {
+			this.config = {};
+			this.config.debug = payload.config.debug;
+			setDebug(this.config.debug);
+		}
 
 		if (notification === "SCAN_DIRECTORY") {
 

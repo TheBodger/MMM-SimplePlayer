@@ -29,7 +29,9 @@ Module.register("MMM-SimplePlayer", {
 		this.currentTrack = 0;
 		this.isPlaying = false;
 		this.DLNAItems = [];
-		this.DLNAItemsCurrentDisplayIdx = 0;
+		//this.DLNAItemsCurrentDisplayIdx = 0;
+		this.DLNAIdxs = [0]; //will contain the idx of item displayed in the current level , used when scrolling left and right, set when scrolling up and down
+		this.DLNACurrentIdx = 0; // points to the current level, ++ -- left and right scrolling
 		this.returnedDLNAItems = [{ is: "-99", type: "server", name: "No DLNA Servers" }];
 		this.loadDLNAItems();
 		this.DLNAServersLoaded = false;
@@ -78,6 +80,10 @@ Module.register("MMM-SimplePlayer", {
 	},
 
 	isSupportedAudio(url) {
+		if (!url)
+		{
+			var x = 1;
+		}
 		const extMatch = url.match(/\.([a-zA-Z0-9]+)(?:\?|#|$)/);
 		if (!extMatch) return false;
 
@@ -90,7 +96,7 @@ Module.register("MMM-SimplePlayer", {
 		//html audio player only currently supports MP3 WAV OGG NOT native windows WMA
 
 		this.trackInfoMsg = "";
-		console.log("src:", src);
+		//console.log("src:", src);
 
 		if (this.isSupportedAudio(src))
 		{
@@ -106,7 +112,7 @@ Module.register("MMM-SimplePlayer", {
 
 		if (this.config.showAlbumArt)
 		{
-			console.log("showing art");
+			//console.log("showing art");
 			this.showAlbumArt();
 		}
 	},
@@ -132,15 +138,13 @@ Module.register("MMM-SimplePlayer", {
 		if (notification === "NEW_DLNA_ITEMS") {
 			
 			this.returnedDLNAItems = payload;
-			this.DLNAItemsCurrentDisplayIdx = 0;
+			//this.DLNAItemsCurrentDisplayIdx = 0;
 
 			if (this.config.showEvents) {
 				this.addLogEntry(`DLNA Playlist Updated:${this.DLNAItems.length} items`);
 			}
 
 			this.loadDLNAItems();
-
-
 			this.showDLNAItems();
 
 		}
@@ -197,30 +201,38 @@ Module.register("MMM-SimplePlayer", {
 
 			if (DLNAItem.type == "server") {
 				this.DLNAServersLoaded = true;
+				this.DLNACurrentIdx = 0;
 			} //received a server
 
 			this.DLNAItems.push({ id: DLNAItem.id, type: DLNAItem.type, item: DLNAItem.name, content: DLNAItem.content });
 
 		});
 
-		console.log("Showing DLNAitems 1", this.DLNAItems.length, " ", JSON.stringify(this.DLNAItems))
+		if (this.DLNAIdxs[this.DLNACurrentIdx] > this.DLNAItems.length - 1) { this.DLNAIdxs[this.DLNACurrentIdx] = 0; };
+
+		//console.log("Showing DLNAitems 1", this.DLNAItems.length, " ", JSON.stringify(this.DLNAItems))
 	},
 
 	showDLNAItems() {
 
-		//show the item in this.DLNAItems[this.DLNAItemsCurrentDisplayIdx] in the DLNAitem div
+		//show the item in this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]] in the DLNAitem div
+		var showItem = this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]];
 
-		var showItem = this.DLNAItems[this.DLNAItemsCurrentDisplayIdx];
+		if (!showItem) {
+			var x = 1;
+		}
 
 		if (showItem.type == "server") {
 			this.currentServerID = showItem.id;
+			this.DLNAIdxs[0] = 0;
+			this.DLNACurrentIdx = 0; 
 		}
 
 		var showContent = ` ${((showItem.content) ? (showItem.content.album) ? showItem.content.album : "" : "")}`;
 
 		this.DLNAItem.setAttribute("data-text", showItem.item + showContent);
 
-		if (showItem.content && showItem.content.albumArt) { this.showDLNAAlbumArt(showItem.content.albumArt) }
+		if (this.config.showAlbumArt && showItem.content && showItem.content.albumArt) { this.showDLNAAlbumArt(showItem.content.albumArt) }
 
 	},
 
@@ -346,7 +358,7 @@ Module.register("MMM-SimplePlayer", {
 			this.DLNAItem = document.createElement("div");
 			this.DLNAItem.id = "DLNAItem";
 			this.DLNAItem.className = 'track-info small';
-			console.log("Showing DLNAitems 2", this.DLNAItems.length)
+			//console.log("Showing DLNAitems 2", this.DLNAItems.length)
 			this.showDLNAItems();
 			this.DLNAItem.innerHTML = `&nbsp;`;
 
@@ -425,31 +437,38 @@ Module.register("MMM-SimplePlayer", {
 		switch (action) {
 			case "ScrollDown":
 				//scroll down the DLNA items, if there are more items to display using the idx and length
-				this.DLNAItemsCurrentDisplayIdx++
-				this.DLNAItemsCurrentDisplayIdx = (this.DLNAItemsCurrentDisplayIdx > (this.DLNAItems.length - 1)) ? 0 : this.DLNAItemsCurrentDisplayIdx
-				console.log("Showing DLNAitems 3", this.DLNAItems.length)
+
+				this.DLNAIdxs[this.DLNACurrentIdx]++;
+				//this.DLNAItemsCurrentDisplayIdx++
+
+				this.DLNAIdxs[this.DLNACurrentIdx] = (this.DLNAIdxs[this.DLNACurrentIdx] > (this.DLNAItems.length - 1)) ? 0 : this.DLNAIdxs[this.DLNACurrentIdx]
+
+				//console.log("Showing DLNAitems 3", this.DLNAItems.length)
 				this.showDLNAItems();
 				return;
 
 			case "ScrollUp":
 				//scroll up the DLNA items, if there are more items to display
-				this.DLNAItemsCurrentDisplayIdx--;
-				this.DLNAItemsCurrentDisplayIdx = (this.DLNAItemsCurrentDisplayIdx < 0) ? (this.DLNAItems.length-1) : this.DLNAItemsCurrentDisplayIdx;
-				console.log("Showing DLNAitems 4", this.DLNAItems.length)
+				this.DLNAIdxs[this.DLNACurrentIdx]--;
+				this.DLNAIdxs[this.DLNACurrentIdx] = (this.DLNAIdxs[this.DLNACurrentIdx] < 0) ? (this.DLNAItems.length - 1) : this.DLNAIdxs[this.DLNACurrentIdx];
+				//console.log("Showing DLNAitems 4", this.DLNAItems.length)
 				this.showDLNAItems();
 				return;
 
 
 			case "Add":
 				//add the current displayed item and all children to the DLNA playlist
-				this.sendNotificationToNodeHelper("ADD_DLNA_ITEM", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAItemsCurrentDisplayIdx], returnPlaylist: this.config.showingDLNA });
+				this.sendNotificationToNodeHelper("ADD_DLNA_ITEM", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]], returnPlaylist: this.config.showingDLNA });
 				return;
 			case "Remove":
 				//removes the current displayed item and all children from the DLNA playlist
-				this.sendNotificationToNodeHelper("REMOVE_DLNA_ITEM", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAItemsCurrentDisplayIdx], returnPlaylist: this.config.showingDLNA });
+				this.sendNotificationToNodeHelper("REMOVE_DLNA_ITEM", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]], returnPlaylist: this.config.showingDLNA });
 				return;
+
 			case "Clear":
 				//clears the current DLNA playlist
+				this.DLNACurrentIdx = 0;
+				this.DLNAIdxs = [0];
 				this.sendNotificationToNodeHelper("CLEAR_DLNA_PLAYLIST", { returnPlaylist: this.config.showingDLNA });
 				return;
 			case "Save":
@@ -463,14 +482,17 @@ Module.register("MMM-SimplePlayer", {
 			case "ScrollLeft":
 				//if the current item displayed is a server cant scroll left
 
-				if (this.DLNAItems[this.DLNAItemsCurrentDisplayIdx].type == "server" || !this.DLNAServersLoaded) { return; }
-				this.sendNotificationToNodeHelper("DLNA_ACTION", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAItemsCurrentDisplayIdx], returnPlaylist: this.config.showingDLNA });
+				if (this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]].type == "server" || !this.DLNAServersLoaded) { return; }
+				this.sendNotificationToNodeHelper("DLNA_ACTION", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]], returnPlaylist: this.config.showingDLNA });
+				this.DLNACurrentIdx--;
 				return;
 
 			case "ScrollRight":
 				//if current type is media, or no servers loaded yet, cant scroll right
-				if (this.DLNAItems[this.DLNAItemsCurrentDisplayIdx].type == "media" || !this.DLNAServersLoaded) { return; }
-				this.sendNotificationToNodeHelper("DLNA_ACTION", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAItemsCurrentDisplayIdx], returnPlaylist: this.config.showingDLNA });
+				if (this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]].type == "media" || !this.DLNAServersLoaded) { return; }
+				this.sendNotificationToNodeHelper("DLNA_ACTION", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]], returnPlaylist: this.config.showingDLNA });
+				this.DLNACurrentIdx++;
+				if (this.DLNACurrentIdx > this.DLNAIdxs.length-1) { this.DLNAIdxs[this.DLNACurrentIdx] = 0; }
 				return;
 		}
 
@@ -478,8 +500,10 @@ Module.register("MMM-SimplePlayer", {
 
 	handleAction(action)
 	{
-
-		if (this.config.showEvents) { this.addLogEntry(`Handling: ${action}`); }
+		if (this.config.showEvents)
+		{
+			this.addLogEntry(`Handling: ${action}`);
+		}
 
 		//as some actions are triggered by actions on a button that we want to change, then map action to button name
 
@@ -619,7 +643,7 @@ Module.register("MMM-SimplePlayer", {
 
 	showAlbumArt()
 	{
-		if (!this.config.art || !this.config.art[this.config.playlistOrder[this.currentTrack]]) { return; }
+		if (!this.config.art || !this.config.art[this.config.playlistOrder[this.currentTrack]]) { return; } //check we have actually got some art to load
 		var sp = document.getElementById("eventLog");
 		sp.setAttribute("art", this.config.art[this.config.playlistOrder[this.currentTrack]]);
 		sp.style.backgroundImage = `url("${this.config.art[this.config.playlistOrder[this.currentTrack]]}")`;
@@ -627,7 +651,7 @@ Module.register("MMM-SimplePlayer", {
 		sp.style.backgroundPosition = 'center';
 		sp.style.backgroundRepeat = 'no-repeat';
 	},
-
+	
 	showDLNAAlbumArt(url) {
 		var sp = document.getElementById("eventLog");
 		sp.setAttribute("art", url);
@@ -688,7 +712,7 @@ Module.register("MMM-SimplePlayer", {
 	},
 
 	notificationReceived(notification) {
-		console.log(notification);
+		//console.log(notification);
 		if (notification === "PAGE_CHANGED") {
 			this.updateDom();
 		}

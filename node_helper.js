@@ -4,7 +4,7 @@ const NodeHelper = require("node_helper");
 const fs = require("fs");
 const path = require("path");
 
-const { findServers, stopFindingServers, FolderTree, getNodeChildren, allValuesTrue } = require('./findServers.cjs');
+const { findServers, stopFindingServers, FolderTree, getNodeChildren, allValuesTrue, Media } = require('./findServers.cjs');
 
 var self = null;
 
@@ -103,7 +103,7 @@ module.exports = NodeHelper.create({
 
 					//should be able to return details at the same level as the parentid of the passed item
 
-					console.log("left", payload.currentServerID);
+					//console.log("left", payload.currentServerID);
 
 					this.getDLNAItems(payload.action, payload.item, payload.currentServerID);
 
@@ -113,7 +113,7 @@ module.exports = NodeHelper.create({
 					//if the item passed is a server check for 0 (id of a server is 0)
 					//otherwise check for children and if present return them and if not present search and return
 
-					console.log("right", payload.currentServerID);
+					//console.log("right", payload.currentServerID);
 					this.getDLNAItems(payload.action, payload.item, payload.currentServerID);
 
 					return;
@@ -284,6 +284,13 @@ module.exports = NodeHelper.create({
 
 			var node = self.currentServer.folderTree.nodes.get(self.currentNodeID);
 
+			if (node.children.length == 0) {
+				//empty node
+				//add an empty child entry
+				self.currentServer.folderTree.addChild(node.id, "empty", "Empty Folder", null, null, "media", new Media(null, null, null, null, null));
+
+			}
+
 			self.sendSocketNotification("NEW_DLNA_ITEMS", self.populateDLNAList_children(node));
 
 		}
@@ -298,11 +305,34 @@ module.exports = NodeHelper.create({
 		var searchNode = { id: this.currentNodeID };
 		var resetSearchNodes = true;
 
-		if (callback == '') { callback = this.onCompleteCallback; }
+		var currentNode = this.servers[serverIDX].folderTree.nodes.get(this.currentNodeID);
 
-		self = this;
+		if (currentNode.contentType == "media") //just load the media, dont try and get any children // if here we must be in an add situation
+		{
 
-		getNodeChildren(this.currentServer, searchNode, recurse, resetSearchNodes, callback)
+			this.addNodeMedia(currentNode);
+
+			if (self.DLNAShowing) {
+				try {
+					self.sendSocketNotification("PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAtrackPaths, self.DLNAtrackArt]);
+				} catch (err) {
+					console.error("Error loading playlist:", err);
+				}
+			}
+		}
+		else {
+			if (callback == '') { callback = this.onCompleteCallback; }
+
+			self = this;
+
+			getNodeChildren(this.currentServer, searchNode, recurse, resetSearchNodes, callback)
+		}
+	},
+
+	addNodeMedia(node) {
+
+		self.DLNAtrackPaths.push(node.url);
+		self.DLNAtrackArt.push(node.art);
 
 	},
 
@@ -313,10 +343,6 @@ module.exports = NodeHelper.create({
 		//if action is right, find the node with the id -
 		//if it has children return them
 		//if there are no children, try and get some using its controlID (server = 0) as long as it isnt an item
-
-		if (serverID == -2) {
-			var x = 1;
-		}
 
 		var result = this.getSearchNodeId(item, serverID);
 
@@ -556,7 +582,7 @@ module.exports = NodeHelper.create({
 		* if it is a local file uses parsefile
 		* if it is a URL uses music-metadata
 		*/
-		console.log(payload);
+		//console.log(payload);
 
 		const missingMetaData = { title: "Unknown Title", artist: "Unknown Artist", album: "Unknown Album", track: "Unknown Track" };
 

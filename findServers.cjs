@@ -96,7 +96,9 @@ function allValuesTrue(data) {
     Object.values(obj).every(value => value === true)
   );
 }
-function getNodeChildren(server, node, recurse, resetSearchNodes, onCompleteCallback) {
+
+function getNodeChildren(server, node, recurse, resetSearchNodes, onCompleteCallback)
+{
 
   if (resetSearchNodes) { searchNodes = []; }
 

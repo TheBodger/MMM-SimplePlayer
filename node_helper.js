@@ -103,6 +103,8 @@ module.exports = NodeHelper.create({
 
 					//should be able to return details at the same level as the parentid of the passed item
 
+					console.log("left", payload.currentServerID);
+
 					this.getDLNAItems(payload.action, payload.item, payload.currentServerID);
 
 					return;
@@ -111,6 +113,7 @@ module.exports = NodeHelper.create({
 					//if the item passed is a server check for 0 (id of a server is 0)
 					//otherwise check for children and if present return them and if not present search and return
 
+					console.log("right", payload.currentServerID);
 					this.getDLNAItems(payload.action, payload.item, payload.currentServerID);
 
 					return;
@@ -124,9 +127,13 @@ module.exports = NodeHelper.create({
 		}
 
 		if (notification === "CLEAR_DLNA_PLAYLIST") {
+			//clear local playlist
 			this.DLNAtrackPaths = [];
 			this.DLNAtrackArt = [];
-			//reload the servers
+			if (this.DLNAShowing) { this.sendSocketNotification("PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAtrackPaths, this.DLNAtrackArt]) }
+
+			//reload the servers, server id here shold always be -1
+			this.setInitialValues();
 			this.getDLNAServers();
 			//wait for 10 seconds and then stop finding servers
 			setTimeout(() => {
@@ -135,7 +142,7 @@ module.exports = NodeHelper.create({
 				stopFindingServers();
 
 			}, 10000);
-			if (this.DLNAShowing) { this.sendSocketNotification("PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAtrackPaths, this.DLNAtrackArt]) }
+
 		}
 
 		if (notification === "GET_DLNA_PLAYLIST") //send back the current playlist
@@ -187,6 +194,7 @@ module.exports = NodeHelper.create({
 
 		if (allValuesTrue(searchNodes))
 		{
+			//getall the media from this and all child nodes, more recursion
 			//getall the media from this and all child nodes, more recursion
 
 			var parentNode = self.currentServer.folderTree.nodes.get(self.currentNodeID);
@@ -306,6 +314,10 @@ module.exports = NodeHelper.create({
 		//if it has children return them
 		//if there are no children, try and get some using its controlID (server = 0) as long as it isnt an item
 
+		if (serverID == -2) {
+			var x = 1;
+		}
+
 		var result = this.getSearchNodeId(item, serverID);
 
 		//if action is left, then find the node with the parentid and then its parent of the current node and populate children
@@ -407,10 +419,8 @@ module.exports = NodeHelper.create({
 					this.serverId--;
 				}
 
-				if (!DLNAList.some(server => server.server === newServer.server)) {
-
+				if (!DLNAList.some(server => server.name === newServer.server)) {
 					const newItem = { id: null, type: null, name: null }; //format of item to store in the list of items ready to return to the calling module
-
 					newItem.id = newServer.id;
 					newItem.type = "server";
 					newItem.name = newServer.server;

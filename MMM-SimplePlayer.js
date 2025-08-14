@@ -90,6 +90,7 @@ Module.register("MMM-SimplePlayer", {
 		//html audio player only currently supports MP3 WAV OGG NOT native windows WMA
 
 		this.trackInfoMsg = "";
+		console.log("src:", src);
 
 		if (this.isSupportedAudio(src))
 		{
@@ -98,6 +99,7 @@ Module.register("MMM-SimplePlayer", {
 		else
 		{
 			this.trackInfoMsg = " - Unsupported audio";
+			this.audio.src = null;
 		}
 
 		this.getTrackInfo();
@@ -128,6 +130,7 @@ Module.register("MMM-SimplePlayer", {
 		//these replace the DLNA_items list held locally in the module
 		//the DLNA items display logic is then handled through the handleDLNAevents function and the available DLNA list.
 		if (notification === "NEW_DLNA_ITEMS") {
+			
 			this.returnedDLNAItems = payload;
 			this.DLNAItemsCurrentDisplayIdx = 0;
 
@@ -137,7 +140,7 @@ Module.register("MMM-SimplePlayer", {
 
 			this.loadDLNAItems();
 
-			console.log("Showing DLNAitems 1", this.DLNAItems.length)
+
 			this.showDLNAItems();
 
 		}
@@ -199,6 +202,8 @@ Module.register("MMM-SimplePlayer", {
 			this.DLNAItems.push({ id: DLNAItem.id, type: DLNAItem.type, item: DLNAItem.name, content: DLNAItem.content });
 
 		});
+
+		console.log("Showing DLNAitems 1", this.DLNAItems.length, " ", JSON.stringify(this.DLNAItems))
 	},
 
 	showDLNAItems() {

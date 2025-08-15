@@ -18,7 +18,7 @@ Showing MetaData (Artist album track# and track title)
 Showing Event Viewer (used for debugging), and meta data.
 <br>
 ![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_EventViewer.png?raw=true "Screenshot with Event,  meta + Controls")<BR>
-Showing DLNA server controls, DLNA server active and meta data. Server is called DiskStation and the track is playing from a previously saved local DLNA playlist.
+Showing DLNA server controls, DLNA server active and meta data. Server is called DiskStation and the track is playing from a previously saved local DLNA playlist. Album art is being shown.
 <br>
 ![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_DLNA.png?raw=true "Screenshot with DLNA + Controls")<BR>
 

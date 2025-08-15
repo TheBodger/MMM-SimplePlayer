@@ -22,7 +22,7 @@ Showing Event Viewer (used for debugging), and meta data.
 ![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_EventViewer.png?raw=true "Screenshot with Event,  meta + Controls")<BR>
 Showing DLNA server controls, DLNA server active and meta data. Server is called DiskStation and the track is playing from a previously saved local DLNA playlist.
 <br>
-![Example of MMM-SimplePlayer audio player module]('screenShots/Screenshot 2025-08-15 140646.png'?raw=true "Screenshot with DLNA + Controls")<BR>
+![Example of MMM-SimplePlayer audio player module]('screenShots/Screenshot 2025-08-15 140646.png?raw=true' "Screenshot with DLNA + Controls")<BR>
 
 ## Tracks
 

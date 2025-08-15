@@ -137,14 +137,14 @@ This will show the Simple format of controls (as in example 1 above) which will 
 | `playlistName`                | *Optional* - the playlist to use, either m3u or m3u8 format<br><br> **Possible values:** any valid file name and type.<br> **Default value:** "examplePlaylist.m3u"
 | `showEvents`                | *Optional* - if true, a window showing all events emitted from the player is displayed. Used primarily for debugging purposes <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `showMeta`                | *Optional* - if true, the meta data is loaded from the track and displayed: Artist - Album - Track# - Track title<br><br> **Possible values:** true/false.<br> **Default value:** true
-| `showAlbumArt`                | *Optional* - if true, displays any album art provided from the DLNA server above the main controls. Support for shoing Art from other locations is being developed. <br><br> **Possible values:** true/false.<br> **Default value:** false
+| `showAlbumArt`                | *Optional* - if true, displays any album art provided from the DLNA server above the main controls. Support for showing Art from other locations is being developed. <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `startMuted`                | *Optional* - if true, the volume is set to 0% (muted) when the module loads. Otherwise it is set to 50%<br><br> **Possible values:** true/false.<br> **Default value:** false
 | `shuffle`                | *Optional* - if true, once the tracks are loaded from the folder or playlist, their order is shuffled (see controls). <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `repeat`                | *Optional* - if true, after the last track has ended, all tracks are repeated, in the order determined by any Shuffles (see controls). <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `DLNAPlaylistName`      | *Optional* - the name of the local DLNAplaylist the module will use to save and open from. This must have extension of m3u.<br><br> **Possible values:** any valid file name and type.<br> **Default value:** "dlnaPlaylist.m3u"
 | `showDLNA`                | *Optional* - if true, shows the DLNA portion of the control panel. <br><br> **Possible values:** true/false.<br> **Default value:** false
-| `supportedAudioExt`      | *Optional* - a list of music format extensions supported, currently 'MP3', 'WAV', 'OGG'. If the HTML audio player adds additional formats then these should be added to this list.<br><br> **Possible values:** Liat of support audio type extensions.<br> **Default value:** ['MP3', 'WAV', 'OGG']
-| `debug`                | *Optional* - if true, shows some additional  DLNA portion of the control panel. <br><br> **Possible values:** true/false.<br> **Default value:** false		
+| `supportedAudioExt`      | *Optional* - a list of music format extensions supported, currently 'MP3', 'WAV', 'OGG'. If the HTML audio player adds additional formats then these should be added to this list.<br><br> **Possible values:** List of support audio type extensions.<br> **Default value:** ['MP3', 'WAV', 'OGG']
+| `debug`                | *Optional* - if true, shows some additional messages in the consoles. <br><br> **Possible values:** true/false.<br> **Default value:** false		
 
 ## Controls
 

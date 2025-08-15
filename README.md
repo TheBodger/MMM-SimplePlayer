@@ -148,7 +148,7 @@ This will show the Simple format of controls (as in example 1 above) which will 
 
 ## Controls
 
-![Example of MMM-SimplePlayer audio player module](Screenshot_simple.png?raw=true "screenShots/Screenshot of simple Controls not playing")<BR>
+![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_simple.png?raw=true "Screenshot of simple Controls not playing")<BR>
 
 The controls from left to right in the example screenshot above are:
 | Control                  | Details

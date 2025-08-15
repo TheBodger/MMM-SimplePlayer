@@ -114,7 +114,7 @@ This will show the Simple format of controls (as in example 1 above) which will 
 	position: "top_left",
 	config: {
 		autoplay: true, 
-		playTracks: false, //Means eithe play from the directory or not, must be false to use the playlist
+		playTracks: false, //Means either play from the directory or not, must be false to use the playlist
 		musicDirectory: "modules/MMM-SimplePlayer/music",
 		usePlaylist: true,
 		playlistName: "examplePlaylist.m3u",

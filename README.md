@@ -141,7 +141,7 @@ This will show the Simple format of controls (as in example 1 above) which will 
 | `repeat`                | *Optional* - if true, after the last track has ended, all tracks are repeated, in the order determined by any Shuffles (see controls). <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `DLNAPlaylistName`      | *Optional* - the name of the local DLNAplaylist the module will use to save and open from. This must have extension of m3u.<br><br> **Possible values:** any valid file name and type.<br> **Default value:** "dlnaPlaylist.m3u"
 | `showDLNA`                | *Optional* - if true, shows the DLNA portion of the control panel. <br><br> **Possible values:** true/false.<br> **Default value:** false
-| `supportedAudioExt`      | *Optional* - a list of music format extensions supported, currently 'MP3', 'WAV', 'OGG'. If the HTML audio player adds additional formats then these should be added to this list.<br><br> **Possible values:** List of support audio type extensions.<br> **Default value:** ['MP3', 'WAV', 'OGG']
+| `supportedAudioExt`      | *Optional* - a list of music format extensions supported, currently 'MP3', 'WAV', 'OGG' used to filter tracks from a DLNA server. Any Tracks not matching these formats will be highlighted in the Meta Data area.. If the HTML audio player adds additional formats then these should be added to this list.<br><br> **Possible values:** List of supported audio type extensions.<br> **Default value:** ['MP3', 'WAV', 'OGG']
 | `debug`                | *Optional* - if true, shows some additional messages in the consoles. <br><br> **Possible values:** true/false.<br> **Default value:** false		
 
 ## Controls
@@ -159,14 +159,14 @@ The playback controls from left to right in the example screenshot above are:
 | `Next Track`		| Loads the Next track in the list, which will be the first track if the current track was the last track in the list
 | `Set Volume`		| Shows the current volume level.<BR><BR> Click to cycle through Muted, 50% of volume and 100% of volume.
 | `(un)Shuffle Tracks`		| If dimmed the track list order is unshuffled, and they will play in the order found in the folder or playlist. <BR><BR>Click to shuffle the list into a random order. Order should be different each time the list is shuffled. After a shuffle, the next track played will be random and may be the same as the track playing when shuffled.<BR><BR> If highlighed, the list is shuffled<BR><BR>Click to unshuffle back to the original order. <BR><BR>If the shuffle config option is true, then after the tracks have been first loaded as the module starts, they will be then shuffled. 
-| `Repeat Tracks (On/Off)`		| If dimmed, when the last track ends, playing stops.<BR><BR> Click to turn Repeat on<BR><BR> If highlighed, repeat is on. See the repeat option in config for details. <BR><BR> Click to turn repeat off.
+| `Repeat Tracks (On/Off)`		| If dimmed, when the last track ends, playing stops.<BR><BR> Click to turn Repeat on<BR><BR> If highlighted, repeat is on. See the repeat option in config for details. <BR><BR> Click to turn repeat off.
 | `DLNA source (On/Off)`		| If dimmed, the local tracks or playlist are used as source, if bright then the DLNA playlist is used. <BR>if FLNA has not been enabled in the config, a dimmed icon shows indicating it is not available.<BR><BR> Click to toggle between sources.
 
 ![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_DLNA_Controls.png?raw=true "Screenshot of simple Controls DLNA available/active")<BR>
 
-The Text area immediatly above the DLNA controls displays the current item within the Folder tree sent from the selected DLNA server. Some of the folders will be empty and this will be indicated with a message in the text area. 
+The Text area immediately above the DLNA controls displays the current item within the Folder tree sent from the selected DLNA server. Some of the folders will be empty and this will be indicated with a message in the text area. 
 
-If No DLNA servers is displayed, then check that the expected DLNA servers are running and visible across the network. Sometimes I found the Synology DLNA server all testing was carried out on stopped repsonding and need to be restarted.
+If No DLNA servers is displayed, then check that the expected DLNA servers are running and visible across the network. Sometimes I found the Synology DLNA server testing was carried out on stopped responding and need to be restarted.
 
 The DLNA controls from left to right in the example screenshot above are:
 | Control                  | Details
@@ -174,17 +174,19 @@ The DLNA controls from left to right in the example screenshot above are:
 | `Scroll Down`	| Scrolls the display of the current DLNA list of folders/media (tracks, images, videos) down
 | `Scroll Up`	| Scrolls the display of the current DLNA list of folders media up
 | `Add Item`	| Adds all media in the current displayed folder and any subfolders to the DLNA playlist. If the item displayed is a media item then only that is added to the DLNA playlist. If the DLNA playlist is being used as source, then the new playlist is passed to the Player. 
-| `Remove Item`	| Removes all media in the current displayed folder and any subfolders from the DLNA playlist. If the item displayed is a media item then only that is removed fom the DLNA playlist. If the DLNA playlist is being used as source, then the new playlist is passed to the Player.
-| `Clear DLNA playlist`	| Clears all entries from the current DLNA playlist and rescans for DLNA Servers. If new items have been added to the DLNA Server, then using this option ensures that the layesy folders and media are shown. If the DLNA playlist is being used as source, then the new playlist is passed to the Player.
+| `Remove Item`	| Removes all media in the current displayed folder and any subfolders from the DLNA playlist. If the item displayed is a media item then only that is removed from the DLNA playlist. If the DLNA playlist is being used as source, then the new playlist is passed to the Player.
+| `Clear DLNA playlist`	| Clears all entries from the current DLNA playlist and rescans for DLNA Servers. If new items have been added to the DLNA Server, then using this option ensures that the latest folders and media are shown. If the DLNA playlist is being used as source, then the new playlist is passed to the Player.
 | `Save DLNA playlist`	| Saves the current DLNA playlist to the location specified in the config. Always overwrites whatever was there.
 | `Open DLNA playlist`	| Loads the current DLNA playlist from the location specified in the config. Always overwrites whatever was there.
 | `Scroll Left`	| Scrolls the display of the current DLNA list of folders/media left, showing the parent of the current item. If the displayed item is a server no more scrolling left occurs
-| `Scroll Right`	| Scrolls the display of the current DLNA list of folders/mediaright, showing the child of the current item. If the displayed item is media no more scrolling right occurs
+| `Scroll Right`	| Scrolls the display of the current DLNA list of folders/media right, showing the child of the current item. If the displayed item is media no more scrolling right occurs
 
 ## Comments
 
-As the simplePlayer always starts with either the local tracks or a local playlist, by entering the DLNA playlist name into the config option for playlistName then the previously saved DLNA playlist will start playing immediatly.
+As the simplePlayer always starts with either the local tracks or a local playlist, by entering the DLNA playlist name into the config option for playlistName then the previously saved DLNA playlist will start playing immediately.
 
-If the behaviour of the module isnt as expected, check that folders and files are always within a folder path that includes the musicDirectory value, that the DLNA Server(s) are visible, and that the music is off a type supported by the HTML ausio player (the supportedAudioExt config option default shows the type and the extension these files must be) If this doesnt resolve the problem, raise an error report in github with a copy of the config used, and details of the where the music is, track details and names, and how the MagicMirror is run and on what OS/platform.
+If the behaviour of the module isn't as expected, check that folders and files are always within a folder path that includes the musicDirectory value, that the DLNA Server(s) are visible, and that the music is off a type supported by the HTML audio player (the supportedAudioExt config option default shows the type and the extension these files must be) If this does'nt resolve the problem, raise an error report in github with a copy of the config used, and details of the where the music is, track details and names, and how the MagicMirror is run and on what OS/platform.
 
-Additional capabilities may be added, including showing all Album Images and alternative controls layout.
+Additional capabilities may be added, including showing all Album Images, supporting external control notifications and alternative controls layout.
+
+Happy Listening

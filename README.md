@@ -1,6 +1,11 @@
 # MMM-SimplePlayer
 
-This magic mirror module will enable the user to play music, control playback through a mouse or touchscreen and view details of the Track playing. Tracks are either played from a local folder relative to the MagicMirror folder or from a named playlist in a local folder, containing local tracks in folders relative to the requested musicDirectory, and/or from any streaming servers.
+This magic mirror module will enable the user to play music, control playback through a mouse or touchscreen and view details of the Track playing. 
+
+Tracks are cane be played from either:
+ 	a local folder relative to the MagicMirror folder
+ 	a named playlist in a local folder, containing local tracks in folders relative to the requested musicDirectory, and/or from any streaming servers
+ 	a DLNA server visible to the magicMirror
 
 ### Examples:
 

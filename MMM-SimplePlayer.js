@@ -60,7 +60,7 @@ Module.register("MMM-SimplePlayer", {
 			Volume: [this.config.startMuted ? "fa-volume-off" : "fa-volume-low", true],
 			Shuffle: ["fa-random", this.config.shuffle],
 			Repeat: ["fa-redo", this.config.repeat],
-			DLNA: ["fa-server", this.config.showingDLNA], //if DLNA enabled, will toggle between playing the current DLNA playlist
+			this.config.showDLNA ?  DLNA: ["fa-server", this.config.showingDLNA] : DLNA_Not_Available: ["fa-ban", true], 
 		}
 
 		this.DLNAIconMap =

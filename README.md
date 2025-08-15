@@ -9,7 +9,7 @@ Tracks can be played from either:
 
 ### Examples:
 
-Screenshots of the Simple layout when when music is playing<br>
+Screenshots of the Simple layout when music is playing<br>
 ![Video of MMM-SimplePlayer audio player module](g130129.gif)
 <br>
 Showing MetaData (Artist album track# and track title)
@@ -34,7 +34,7 @@ If tracks are in different formats, such as WMA, then use a conversion tool to c
 
 ### Security and track location
 
-Modern browsers incorporate various security features that wont load tracks from "unSafe" locations. Different browsers (inclduing Electron) have different interpretations of what is "unSafe" and so tracks in a location playable from one device/interface may be rejected in another combination. 
+Modern browsers incorporate various security features that wont load tracks from "unSafe" locations. Different browsers (including Electron) have different interpretations of what is "unSafe" and so tracks in a location playable from one device/interface may be rejected in another combination. 
 
 Some browsers will not Autoplay tracks when MM is first started. In this case, to play the first track, press play. After that, track changes will play automatically
 
@@ -44,11 +44,11 @@ If using a playlist, then the tracks within the playlist should either refer to 
 
 ### Playlist formats
 
-Playlists in the standard m3u or m3u8 format are supported. For local tracks make sure that the track is referenced in a relative way (i.e. it shouldnt start with \ or /) and that is is within the folder or a subfolder of musicDirectory config entry, see examples below.
+Playlists in the standard m3u or m3u8 format are supported. For local tracks make sure that the track is referenced in a relative way (i.e. it shouldn’t start with \ or /) and that is is within the folder or a subfolder of musicDirectory config entry, see examples below.
 
 If the tracks are from a webserver, then they should start with HTTP:// or HTTPS://
 
-There are many tools available to build a standard playlist. Microsofts Legacy Media player (MMP) can easily add tracks from a DLNA server into a playlist, that can then be saved in m3u format.
+There are many tools available to build a standard playlist. Microsoft’s Legacy Media player (MMP) can easily add tracks from a DLNA server into a playlist, that can then be saved in m3u format to the MagicMirror server.
 
 Currently SimplePlayer doesnt support internet radio playlists served by a DLNA server (they end in .pls or similar). A solution is being looked into.
 
@@ -81,7 +81,7 @@ Note that in this example these tracks are in the folder indicated in the musicD
 
 ### Dependencies
 
-This module requires multiple modules, either included in the install or when npm install is run. Package.josn contains details. Some Forks of modules are also included that have been enhanced specifially for SimplePlayer.
+This module requires multiple modules, either included in the install or when npm install is run. Package.json contains details. Some Forks of modules are also included that have been enhanced specifially for SimplePlayer.
 
 ### Installation
 To install the module, use your terminal to:

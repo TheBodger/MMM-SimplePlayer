@@ -147,8 +147,10 @@ This will show the Simple format of controls (as in example 1 above) which will 
 | `debug`                | *Optional* - if true, shows some additional messages in the consoles. <br><br> **Possible values:** true/false.<br> **Default value:** false		
 
 ## Controls
-
-![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_simple.png?raw=true "Screenshot of simple Controls not playing")<BR>
+Showing DLNA available but not being used for music source (it is dimmed)
+![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_simple.png?raw=true "Screenshot of simple Controls DLNA available/not active")<BR>
+Showing that DLNA has not been enabled in the config
+![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_DLNA_disabled.png.png?raw=true "Screenshot of simple Controls DLNA not available from config setting")<BR>
 
 The controls from left to right in the example screenshot above are:
 | Control                  | Details

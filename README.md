@@ -9,9 +9,7 @@ Tracks can be played from either:
 
 ### Examples:
 
-Screenshots of the Simple layout when not playing, and when music is playing<br>
-![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_simple.png?raw=true "Screenshot of simple Controls not playing")<BR>
-<BR>
+Screenshots of the Simple layout when when music is playing<br>
 ![Video of MMM-SimplePlayer audio player module](g130129.gif)
 <br>
 Showing MetaData (Artist album track# and track title)

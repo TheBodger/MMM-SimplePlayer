@@ -21,6 +21,12 @@ Module.register("MMM-SimplePlayer", {
 		startMuted: false,
 		shuffle: false,
 		repeat: false,
+
+		showMini:false, //start with miniplayer
+		miniplayercontrols: ['Back', 'Play', 'Next', 'MiniPlayer'],
+
+		defaultplayercontrols: ['Back', 'Play', 'Stop', 'Next', 'Volume', 'Shuffle', 'Repeat', 'MiniPlayer', 'DLNA'],
+
 		supportedAudioExt: ['MP3', 'WAV', 'OGG'],
 		debug: false,
 	},
@@ -42,6 +48,7 @@ Module.register("MMM-SimplePlayer", {
 		this.trackInfoMsg = "";
 
 		this.config.showingDLNA = false; //used to toggle the DLNA button
+		this.showingMini = this.config.showMini; //used to toggle the Miniplayer button
 
 		this.requestTracks();
 
@@ -54,20 +61,27 @@ Module.register("MMM-SimplePlayer", {
 		this.iconMap =
 		{
 			Back: ["fa-backward", true],
-			"Play/Pause": ["fa-play", true],
+			Play: ["fa-play", true],
 			Stop: ["fa-stop", true],
 			Next: ["fa-forward", true],
 			Volume: [this.config.startMuted ? "fa-volume-off" : "fa-volume-low", true],
 			Shuffle: ["fa-random", this.config.shuffle],
 			Repeat: ["fa-redo", this.config.repeat],
+			MiniPlayer: ["fa-minimize", true],
 		}
 
-		if (this.config.showDLNA) {
+		if (this.config.showDLNA)
+		{
 			this.iconMap["DLNA"] = ["fa-server", this.config.showingDLNA];
 		}
 		else
 		{
 			this.iconMap["DLNA_Not_Available"] = ["fa-ban", false];
+			const index = this.config.defaultplayercontrols.indexOf('DLNA');
+			if (index !== -1)
+			{
+				this.config.defaultplayercontrols[index] = 'DLNA_Not_Available';
+			}
 		}
 
 		this.DLNAIconMap =
@@ -246,17 +260,14 @@ Module.register("MMM-SimplePlayer", {
 
 	},
 
-	getDom() {
-
-		if (this.config.debug) console.log("GetDom");
+	buildDom(controlList) {
 
 		const wrapper = document.createElement("div");
 		wrapper.className = "simple-player";
 		wrapper.id = "simple-player";
 		if (this.config.showAlbumArt) { wrapper.setAttribute("art", ""); }
 
-		if (this.config.showEvents || this.config.showAlbumArt)
-		{
+		if (this.config.showEvents || this.config.showAlbumArt) {
 			const eventLog = document.createElement("div");
 			eventLog.className = "small muted-background";
 			eventLog.id = "eventLog";
@@ -266,8 +277,7 @@ Module.register("MMM-SimplePlayer", {
 			eventLog.style.padding = "1em";
 			eventLog.innerHTML = "&nbsp;";
 
-			if (this.config.showEvents)
-			{
+			if (this.config.showEvents) {
 				eventLog.innerHTML = "<strong>Event Log:</strong>";
 				eventLog.style.border = "1px solid #ccc";
 
@@ -300,14 +310,13 @@ Module.register("MMM-SimplePlayer", {
 		var preEventType = "";
 
 		// Attach listeners for each event if required
-		
+
 		audioEvents.forEach(eventType => {
 
 			if (eventType.required || this.config.showEvents) {
 
 				this.audio.addEventListener(eventType.action, (e) => {
-					if (this.config.showEvents && !(preEventType == eventType.action))
-					{ 
+					if (this.config.showEvents && !(preEventType == eventType.action)) {
 						const timestamp = new Date().toLocaleTimeString();
 						this.addLogEntry(`${timestamp} — ${eventType.action}`);
 					}
@@ -316,7 +325,7 @@ Module.register("MMM-SimplePlayer", {
 				});
 			}
 		});
-		
+
 		this.audio.controls = false;
 		this.audio.volume = this.config.startMuted ? 0 : 0.5;
 		this.audio.autoplay = this.config.autoplay;
@@ -332,7 +341,9 @@ Module.register("MMM-SimplePlayer", {
 
 		if (!this.config.showMeta) { controls.className += this.audio.playing ? " pulsing-border" : " still-border"; }
 
-		Object.entries(this.iconMap).forEach(([action, [icon, unDimmed]]) => {
+		controlList.forEach(action => {
+
+			const [icon, unDimmed] = this.iconMap[action];
 
 			const button = document.createElement("button");
 			button.id = action.toLowerCase() + "Button";
@@ -349,8 +360,7 @@ Module.register("MMM-SimplePlayer", {
 
 		wrapper.appendChild(controls);
 
-		if (this.config.showMeta)
-		{
+		if (this.config.showMeta) {
 
 			this.trackInfo = document.createElement("div");
 			this.trackInfo.id = "trackInfo";
@@ -362,8 +372,7 @@ Module.register("MMM-SimplePlayer", {
 
 		}
 
-		if (this.config.showDLNA)
-		{
+		if (this.config.showDLNA) {
 
 			this.DLNAItem = document.createElement("div");
 			this.DLNAItem.id = "DLNAItem";
@@ -394,9 +403,26 @@ Module.register("MMM-SimplePlayer", {
 		}
 
 		return wrapper;
+
 	},
 
-	addTooltip(buttonElement, toolTip) {
+	getDom() {
+		if (this.config.debug) console.log("GetDom");
+		var wrapper='';
+		if (this.showingMini)
+		{
+			wrapper = this.buildDom(this.config.miniplayercontrols);
+		}
+		else
+		{
+			wrapper = this.buildDom(this.config.defaultplayercontrols);
+		}
+
+		return wrapper;
+	},
+
+	addTooltip(buttonElement, toolTip)
+	{
 
 		const tooltip = document.createElement("span");
 		tooltip.className = "tooltip-text";
@@ -404,20 +430,28 @@ Module.register("MMM-SimplePlayer", {
 		buttonElement.appendChild(tooltip);
 	},
 
-	showPlayPause(action) {
+	showPlayPause(action)
+	{
 		//get the Play/Pause button element so we can change its inner html to the correct icon
 
-		const playPauseButton = document.getElementById("play/pauseButton");
+		const playPauseButton = document.getElementById("playButton");
 
-		if (action === "playing") {
+		//need the tooltip added here!!
+
+		if (action === "playing")
+		{
 			playPauseButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i>';
+			this.addTooltip(playPauseButton, 'Pause');
 		}
-		else if (action === "pause" || action === "Stop") {
+		else if (action === "pause" || action === "Stop")
+		{
 			playPauseButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i>';
+			this.addTooltip(playPauseButton, 'Play');
 		}
 	},
 
-	setupButton(action, icon, unDimmed, buttonElement) {
+	setupButton(action, icon, unDimmed, buttonElement)
+	{
 
 		//if button element passed always use it
 
@@ -525,6 +559,11 @@ Module.register("MMM-SimplePlayer", {
 
 		switch (action) {
 
+			case "MiniPlayer":
+				this.showingMini = !this.showingMini;
+				this.updateDom();
+				return;
+
 			case "ended":
 				//play the next track in the playlist, if at end start again if repeat is enabled
 
@@ -618,7 +657,7 @@ Module.register("MMM-SimplePlayer", {
 				}
 				return;
 
-			case "Play/Pause":
+			case "Play":
 				if (!this.audio.error) {
 					if (this.audio.paused) {
 						if (this.audio.volume == 0) { this.audio.volume = 0.5; } // Set volume to 0.5 when playing if it was muted

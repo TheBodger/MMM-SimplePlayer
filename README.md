@@ -3,9 +3,11 @@
 This magic mirror module will enable the user to play music, control playback through a mouse or touchscreen and view details of the Track playing. 
 
 Tracks can be played from either:
- 	<br>a local folder relative to the MagicMirror folder
- 	<br>a named playlist in a local folder, containing local tracks in folders relative to the requested musicDirectory, and/or from any streaming servers
- 	<br>a DLNA server available on the same network as the magicMirror
+```
+ 	a local folder relative to the MagicMirror folder
+ 	a named playlist in a local folder, containing local tracks in folders relative to the requested musicDirectory, and/or from any streaming servers
+ 	a DLNA server available on the same network as the magicMirror
+```
 
 ### Examples:
 

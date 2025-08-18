@@ -11,7 +11,7 @@ Tracks can be played from either:
 
 ### Examples:
 
-Screenshots of the Simple layout when music is playing<br>
+Screenshots of the Simple layout when music is playing<br>(Note, the MiniPlayer toggle is not shown except in the actual miniPlayer example. See config details)
 ![Video of MMM-SimplePlayer audio player module](g130129.gif)
 <br>
 Showing the default mini player playing

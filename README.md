@@ -169,6 +169,7 @@ The playback controls from left to right in the example screenshot above are:
 | `Set Volume`		| Shows the current volume level.<BR><BR> Click to cycle through Muted, 50% of volume and 100% of volume.
 | `(un)Shuffle Tracks`		| If dimmed the track list order is unshuffled, and they will play in the order found in the folder or playlist. <BR><BR>Click to shuffle the list into a random order. Order should be different each time the list is shuffled. After a shuffle, the next track played will be random and may be the same as the track playing when shuffled.<BR><BR> If highlighed, the list is shuffled<BR><BR>Click to unshuffle back to the original order. <BR><BR>If the shuffle config option is true, then after the tracks have been first loaded as the module starts, they will be then shuffled. 
 | `Repeat Tracks (On/Off)`		| If dimmed, when the last track ends, playing stops.<BR><BR> Click to turn Repeat on<BR><BR> If highlighted, repeat is on. See the repeat option in config for details. <BR><BR> Click to turn repeat off.
+| `Show MiniPlayer`		| Click to toggle between showing the Mini player and the Default player.
 | `DLNA source (On/Off)`		| If dimmed, the local tracks or playlist are used as source, if bright then the DLNA playlist is used. <BR>if DLNA has not been enabled in the config, a dimmed icon shows indicating it is not available.<BR><BR> Click to toggle between sources.
 
 ![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_DLNA_Controls.png?raw=true "Screenshot of simple Controls DLNA available/active")<BR>

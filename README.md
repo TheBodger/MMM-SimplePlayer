@@ -156,6 +156,7 @@ This will show the Simple format of controls (as in example 1 above) which will 
 ## Controls
 Showing DLNA available and being used as music source (it is bright)<BR>
 ![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_simple.png?raw=true "Screenshot of simple Controls DLNA available/active")<BR>
+![(screenShots/Screenshot_simple.png?raw=true)]
 Showing that DLNA has not been enabled in the config / dimmed<BR>
 ![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_DLNA_disabled.png?raw=true "Screenshot of simple Controls DLNA not available from config setting")<BR>
 

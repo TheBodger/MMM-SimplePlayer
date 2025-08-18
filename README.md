@@ -14,6 +14,10 @@ Tracks can be played from either:
 Screenshots of the Simple layout when music is playing<br>
 ![Video of MMM-SimplePlayer audio player module](g130129.gif)
 <br>
+Showing the default mini player playing
+<br>
+![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_mini.png?raw=true "Screenshot with meta + Controls")<BR>
+<br>
 Showing MetaData (Artist album track# and track title)
 <br>
 ![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_withMeta.png?raw=true "Screenshot with meta + Controls")<BR>

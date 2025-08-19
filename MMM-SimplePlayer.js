@@ -1,6 +1,6 @@
 Module.register("MMM-SimplePlayer", {
 	defaults: {
-		autoplay: false,
+		autoplay: true,
 		playTracks: true, // play from directory
 		musicDirectory: "modules/MMM-SimplePlayer/music",
 		usePlaylist: false,

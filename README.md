@@ -134,7 +134,7 @@ This will show the Simple format of controls (as in example 1 above) which will 
 
 | Option                  | Details
 |------------------------ |--------------
-| `autoplay`                | *Optional* - if true, whenever a new track is requested (Next, Previous, First load of MM, DLNA playlist changes if enables and being used as music source) it will automatically start (see security and track location above)<br><br> **Possible values:** true/false.<br> **Default value:** false
+| `autoplay`                | *Optional* - if true, whenever a new track is requested (Next, Previous, First load of MM, DLNA playlist changes if enables and being used as music source) it will automatically start (see security and track location above)<br><br> **Possible values:** true/false.<br> **Default value:** true
 | `playTracks`                | *Optional* - if true, the musicDirectory is searched for valid tracks, and available to play. Must be false to use the playlist option<br><br> **Possible values:** true/false.<br> **Default value:** true
 | `musicDirectory`                | *Optional* - the musicDirectory contains a relative folder path to the MagicMirror main location which is searched for tracks, playlists, and any local tracks referenced in a playlist<br><br> **Possible values:** any valid relative folder path.<br> **Default value:** "modules/MMM-SimplePlayer/music"
 | `usePlaylist`                | *Optional* - if true, the musicDirectory is searched for the named playlist and the tracks within it are made to play. <br><br> **Possible values:** true/false.<br> **Default value:** false

@@ -31,7 +31,16 @@ Module.register("MMM-SimplePlayer", {
 		debug: false,
 	},
 
-	start() {
+	startAudio()
+	{
+		this.requestTracks();
+		if (this.config.showDLNA) {
+			this.requestServers();
+		}
+	},
+
+	start()
+	{
 
 		this.sendNotificationToNodeHelper("CONFIG", { config: { debug: this.config.debug } });
 
@@ -50,13 +59,7 @@ Module.register("MMM-SimplePlayer", {
 		this.config.showingDLNA = false; //used to toggle the DLNA button
 		this.showingMini = this.config.showMini; //used to toggle the Miniplayer button
 
-		this.requestTracks();
-
-		if (this.config.showDLNA) {
-			//tell node helper to try and find us some DLNA servers so we can display them ASAP
-
-			this.requestServers();
-		}
+		this.startAudio();
 
 		this.iconMap =
 		{
@@ -329,7 +332,6 @@ Module.register("MMM-SimplePlayer", {
 		this.audio.controls = false;
 		this.audio.volume = this.config.startMuted ? 0 : 0.5;
 		this.audio.autoplay = this.config.autoplay;
-		//this.setAudioSrc(this.config.playlist[this.config.playlistOrder[this.currentTrack]]||"");
 
 		wrapper.appendChild(this.audio);
 
@@ -550,6 +552,7 @@ Module.register("MMM-SimplePlayer", {
 		}
 
 		//as some actions are triggered by actions on a button that we want to change, then map action to button name
+		//some buttons may not loaded due to config; check them when attempting to set icon values
 
 		var bAction = action;
 
@@ -562,6 +565,7 @@ Module.register("MMM-SimplePlayer", {
 			case "MiniPlayer":
 				this.showingMini = !this.showingMini;
 				this.updateDom();
+				this.startAudio();
 				return;
 
 			case "ended":
@@ -610,16 +614,17 @@ Module.register("MMM-SimplePlayer", {
 
 			case "volumechange":
 				if (this.config.showEvents) { this.addLogEntry(`Event volumeChange: ${this.audio.volume}`); }
-				if (this.audio.volume > 0 && this.audio.volume < 0.51) {
-					Icon.className = "fas fa-volume-low";
-				}
-				else if (this.audio.volume > 0.5)
+				if (Icon)
 				{
-					Icon.className = "fas fa-volume-high";
-				}
-				else
-				{
-					Icon.className = "fas fa-volume-off";
+					if (this.audio.volume > 0 && this.audio.volume < 0.51) {
+						Icon.className = "fas fa-volume-low";
+					}
+					else if (this.audio.volume > 0.5) {
+						Icon.className = "fas fa-volume-high";
+					}
+					else {
+						Icon.className = "fas fa-volume-off";
+					}
 				}
 				return;
 

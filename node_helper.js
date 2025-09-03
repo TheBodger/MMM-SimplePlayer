@@ -24,6 +24,7 @@ module.exports = NodeHelper.create({
 		this.serverId = -1;
 		this.DLNAtrackPaths = []; // the actual DLNA playlist that is sent back to the module to play, can be added/subtracted, cleared, saved and loaded into
 		this.DLNAtrackArt = []; //dlna art for each matching track above
+		this.DLNAImages = []; //dlna images that are currently
 
 		this.currentNodeID = null;
 		this.currentServer = null;
@@ -49,14 +50,12 @@ module.exports = NodeHelper.create({
 			//get the files for the web side of the module
 			const files = fs.readdirSync(payload).filter(f => f.match(/\.(mp3|wav|ogg)$/i)).map(f => `${path.join(payload, f)}`);
 
-			const paths = fs.readdirSync(payload).filter(f => f.match(/\.(mp3|wav|ogg)$/i)).map(f => `${path.join(absolutePath, f)}`);
-
-			this.sendSocketNotification("PLAYLIST_READY", [files, paths,null]);
+			this.sendSocketNotification("PLAYLIST_READY", [files, null,null]);
 		}
 
 		if (notification === "LOAD_PLAYLIST") {
 			try {
-				this.sendSocketNotification("PLAYLIST_READY", [this.getPlaylist(payload), this.getPlaylist(payload), null]);
+				this.sendSocketNotification("PLAYLIST_READY", [this.getPlaylist(payload), null, null]);
 			} catch (err) {
 				console.error("Error loading playlist:", err);
 			}
@@ -136,7 +135,8 @@ module.exports = NodeHelper.create({
 			//clear local playlist
 			this.DLNAtrackPaths = [];
 			this.DLNAtrackArt = [];
-			if (this.DLNAShowing) { this.sendSocketNotification("PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAtrackPaths, this.DLNAtrackArt]) }
+			this.DLNAImages = [];
+			if (this.DLNAShowing) { this.sendSocketNotification("PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAImages, this.DLNAtrackArt]) }
 
 			//reload the servers, server id here shold always be -1
 			this.setInitialValues();
@@ -153,7 +153,7 @@ module.exports = NodeHelper.create({
 
 		if (notification === "GET_DLNA_PLAYLIST") //send back the current playlist
 		{
-			this.sendSocketNotification("PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAtrackPaths, this.DLNAtrackArt]);
+			this.sendSocketNotification("PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAImages, this.DLNAtrackArt]);
 		}
 
 		if (notification === "SAVE_DLNA_PLAYLIST") //save the current playlist
@@ -166,7 +166,7 @@ module.exports = NodeHelper.create({
 		{
 			var DLNAPlaylistPath = path.join(payload.musicDirectory, payload.DLNAPlaylistName);
 			[ this.DLNAtrackPaths, this.DLNAtrackArt ] = this.getDLNAPlaylist(DLNAPlaylistPath);
-			if (payload.returnPlaylist) { this.sendSocketNotification("PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAtrackPaths, this.DLNAtrackArt]) };
+			if (payload.returnPlaylist) { this.sendSocketNotification("PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAImages, this.DLNAtrackArt]) };
 		}
 
 		if (notification === "ADD_DLNA_ITEM")
@@ -178,6 +178,7 @@ module.exports = NodeHelper.create({
 
 			this.loadDLNAitems(this.currentServerIdx, payload.item.id , true, this.loadPlaylistCallback);
 		}
+
 		if (notification === "REMOVE_DLNA_ITEM") {
 			//handle the remove action: use the passed item to find this and all children nodes, searching for new ones if needed to get all the media and remove from the DLNA playlist
 			//before passing it to the module for playing
@@ -209,7 +210,7 @@ module.exports = NodeHelper.create({
 
 			if (self.DLNAShowing) {
 				try {
-					self.sendSocketNotification("PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAtrackPaths, self.DLNAtrackArt]);
+					self.sendSocketNotification("PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAImages, self.DLNAtrackArt]);
 				} catch (err) {
 					console.error("Error loading playlist:", err);
 				}
@@ -221,13 +222,23 @@ module.exports = NodeHelper.create({
 
 	addMediaToTracks: function (parentNode)
 	{
-		parentNode.children.forEach(child => {
-			if (!(child.contentType == "media")) {
+		parentNode.children.forEach(child =>
+		{
+			if (!(child.contentType == "media"))
+			{
 				self.addMediaToTracks(child)
 			}
 			else {
-				self.DLNAtrackPaths.push(child.url);
-				self.DLNAtrackArt.push(child.art);
+
+				if (child.subType == "audio")
+				{
+					self.DLNAtrackPaths.push(child.url);
+					self.DLNAtrackArt.push(child.art);
+				}
+				else if (child.subType == "image")
+				{
+					self.DLNAImages.push(child.url);
+				}
 			}
 		});
 	},
@@ -248,7 +259,7 @@ module.exports = NodeHelper.create({
 
 			if (self.DLNAShowing) {
 				try {
-					self.sendSocketNotification("PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAtrackPaths, self.DLNAtrackArt]);
+					self.sendSocketNotification("PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAImages, self.DLNAtrackArt]);
 				} catch (err) {
 					console.error("Error loading playlist:", err);
 				}
@@ -268,8 +279,13 @@ module.exports = NodeHelper.create({
 				var index = self.DLNAtrackPaths.indexOf(child.url);
 
 				if (index !== -1) {
-					self.DLNAtrackPaths.splice(index, 1);
-					self.DLNAtrackArt.splice(index, 1);
+					if (child.subType == "audio") {
+						self.DLNAtrackPaths.splice(index, 1);
+						self.DLNAtrackArt.splice(index, 1);
+					}
+					else if (child.subType == "image") {
+						self.DLNAImages.splice(index, 1);
+					}
 				}
 
 			}
@@ -320,7 +336,7 @@ module.exports = NodeHelper.create({
 
 			if (self.DLNAShowing) {
 				try {
-					self.sendSocketNotification("PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAtrackPaths, self.DLNAtrackArt]);
+					self.sendSocketNotification("PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAImages, self.DLNAtrackArt]);
 				} catch (err) {
 					console.error("Error loading playlist:", err);
 				}
@@ -337,8 +353,13 @@ module.exports = NodeHelper.create({
 
 	addNodeMedia(node) {
 
-		self.DLNAtrackPaths.push(node.url);
-		self.DLNAtrackArt.push(node.art);
+		if (node.subType == "audio") {
+			self.DLNAtrackPaths.push(node.url);
+			self.DLNAtrackArt.push(node.art);
+		}
+		else if (node.subType == "image") {
+			self.DLNAImages.push(node.url);
+		}
 
 	},
 

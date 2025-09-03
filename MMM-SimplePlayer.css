@@ -1,5 +1,60 @@
 .simple-player {
-  text-align: center; 
+  max-height: 30vh;
+  max-width: 30vw;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+.slideShow {
+  overflow: hidden;
+}
+
+  .slideShow img {
+    object-fit: contain;
+    height: 100%;
+    /*width: 100%;*/
+    /*display: block;
+    margin-left: 0;
+    margin-right: auto;*/
+  }
+
+.borderered {
+  /*border: medium aqua solid;*/
+}
+
+.small-img {
+  width: 15vw;
+  height: 10vw;
+  max-width: 21vw;
+  max-height: 14vw;
+}
+.medium-img {
+  width: 21vw;
+  height: 14vw;
+  max-width: 27vw;
+  max-height: 18vw;
+}
+.large-img {
+  width: 27vw;
+  height: 18vw;
+  max-width: 33vw;
+  max-height: 22vw;
+}
+
+.controls {
+  height: 2em;
+  line-height: 1em;
+  padding: 0.25em;
+  width:100%;
+  
+}
+
+.controls button {
+  margin: 0 5px;
+  font-size: 1em;
+  padding: 0.25em 0.25em;
 }
 
 .muted-background::before {
@@ -13,12 +68,6 @@
 .muted-background > * {
   position: relative;
   z-index: 1;
-}
-
-.controls button {
-  margin: 0 5px;
-  font-size: 1em;
-  padding: 0.25em 0.25em;
 }
 
 .event-log-body {
@@ -40,8 +89,7 @@
 }
 
 .track-info {
-  display: block;
-  width: 100%; /* or a fixed width like 300px */
+  width: 100%;
   overflow:clip;
   white-space: nowrap;
   position: relative;
@@ -49,15 +97,16 @@
   border-block-style:solid;
   border-color:brown;
   box-sizing:border-box;
+  text-align:center;
 }
 
-  .track-info::before {
-    content: attr(data-text);
-    display: inline-block;
-    position: absolute;
-    animation: keyframes 10s linear infinite;
-    padding-left: 50%; /* push start off screen */
-  }
+.track-info::before {
+  content: attr(data-text);
+  display: inline-block;
+  position: absolute;
+  animation: keyframes 10s linear infinite;
+  padding-left: 50%; /* push start off screen */
+}
 
 @keyframes keyframes {
   0% {

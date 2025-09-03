@@ -16,13 +16,14 @@ const client = new Client();
 var debug = false;
 
 class TreeNode {
-  constructor(id, name, art, URL, contentType, content, parentId) {
+  constructor(id, name, art, URL, contentType, subType, content, parentId) {
     this.id = id;
     this.parentId = parentId;
     this.name = name;
     this.art = art;
     this.url = URL;
     this.contentType = contentType;
+    this.subType = subType;
     this.content = content
     this.children = [];
   }
@@ -42,21 +43,21 @@ class FolderTree {
     this.rootIds = new Set(); // Optional: to track top-level folders
   }
 
-  addNodeIfMissing(id, name, art, URL, contentType, content,parentId) {
+  addNodeIfMissing(id, name, art, URL, contentType, subType, content,parentId) {
     if (!this.nodes.has(id)) {
-      const newNode = new TreeNode(id, name, art, URL, contentType, content, parentId);
+      const newNode = new TreeNode(id, name, art, URL, contentType, subType, content, parentId);
       this.nodes.set(id, newNode);
       this.rootIds.add(id);
     }
     return this.nodes.get(id);
   }
 
-  addChild(parentId, childId, childName, childArt, childURL, childcontentType, childcontent) {
+  addChild(parentId, childId, childName, childArt, childURL, childcontentType, childsubType, childcontent) {
     const parentNode = this.addNodeIfMissing(parentId, `Folder ${parentId}`, null, null, null, null, null);
     let childNode = this.nodes.get(childId);
 
     if (!childNode) {
-      childNode = new TreeNode(childId, childName, childArt, childURL, childcontentType, childcontent, parentId);
+      childNode = new TreeNode(childId, childName, childArt, childURL, childcontentType, childsubType, childcontent, parentId);
       this.nodes.set(childId, childNode);
     }
 
@@ -123,28 +124,28 @@ function getNodeChildren(server, node, recurse, resetSearchNodes, onCompleteCall
 
       subcontent.folders.forEach(folder => {
 
-        thisServer.folderTree.addChild(parentID, folder.id, folder.title, folder.albumArt ? folder.albumArt : null, null, folder.contentType, { albumArt: folder.albumArt ? folder.albumArt : null });
+        thisServer.folderTree.addChild(parentID, folder.id, folder.title, folder.albumArt ? folder.albumArt : null, null, folder.contentType, "folder", { albumArt: folder.albumArt ? folder.albumArt : null });
 
       });
 
       subcontent.musicFiles.forEach(music => {
 
-        thisServer.folderTree.addChild(parentID, music.id, music.title, music.albumArt, music.url, music.contentType, new Media(music.artist, music.genre, music.album, music.albumArt, music.date));
+        thisServer.folderTree.addChild(parentID, music.id, music.title, music.albumArt, music.url, music.contentType, music.subType, new Media(music.artist, music.genre, music.album, music.albumArt, music.date));
 
       });
       subcontent.photoFiles.forEach(photo => {
 
-        thisServer.folderTree.folderTree.addChild(parentID, photo.id, photo.title, photo.albumArt, photo.url, photo.contentType, new Media(null, null, photo.album, null, video.date));
+        thisServer.folderTree.addChild(parentID, photo.id, photo.title, photo.albumArt, photo.url, photo.contentType, photo.subType, new Media(null, null, photo.album, null, photo.date));
 
       });
       subcontent.videoFiles.forEach(video => {
 
-        thisServer.folderTree.addChild(parentID, video.id, video.title, video.albumArt, video.url, video.contentType, new Media(null, null, null, null, video.date));
+        thisServer.folderTree.addChild(parentID, video.id, video.title, video.albumArt, video.url, video.contentType, video.subType, new Media(null, null, null, null, video.date));
 
       });
       subcontent.otherFiles.forEach(other => {
 
-        thisServer.folderTree.addChild(parentID, other.id, other.title, other.albumArt, other.url, other.contentType, null);
+        thisServer.folderTree.addChild(parentID, other.id, other.title, other.albumArt, other.url, other.contentType, other.subType, null);
 
       });
 
@@ -328,28 +329,28 @@ function getChildren(server, parentID, callback) {
 
       subcontent.folders.forEach(folder => {
 
-        server.folderTree.addChild(parentID, folder.id, folder.title, folder.albumArt ? folder.albumArt : null, null, folder.contentType, null);
+        server.folderTree.addChild(parentID, folder.id, folder.title, folder.albumArt ? folder.albumArt : null, null, folder.contentType,"folder", null);
 
       });
 
       subcontent.musicFiles.forEach(music => {
 
-        server.folderTree.addChild(parentID, music.id, music.title, music.albumArt, music.url, music.contentType, new Media(music.artist, music.genre, music.album, music.date));
+        server.folderTree.addChild(parentID, music.id, music.title, music.albumArt, music.url, music.contentType, music.subType, new Media(music.artist, music.genre, music.album, music.date));
 
       });
       subcontent.photoFiles.forEach(photo => {
 
-        server.folderTree.addChild(parentID, photo.id, photo.title, photo.albumArt, photo.url, photo.contentType, new Media(null, null, photo.album, video.date));
+        server.folderTree.addChild(parentID, photo.id, photo.title, photo.albumArt, photo.url, photo.contentType, photo.subType, new Media(null, null, photo.album, video.date));
 
       });
       subcontent.videoFiles.forEach(video => {
 
-        server.folderTree.addChild(parentID, video.id, video.title, video.albumArt, video.url, video.contentType, new Media(null, null, null, video.date));
+        server.folderTree.addChild(parentID, video.id, video.title, video.albumArt, video.url, video.contentType, video.subType, new Media(null, null, null, video.date));
 
       });
       subcontent.otherFiles.forEach(other => {
 
-        server.folderTree.addChild(parentID, other.id, other.title, other.albumArt, other.url, other.contentType, null);
+        server.folderTree.addChild(parentID, other.id, other.title, other.albumArt, other.url, other.contentType, other.subType, null);
 
       });
     }
@@ -395,7 +396,8 @@ function listFolderContents(folderId, ftitle, controlUrl, callback) {
           albumArt: i.albumArt,
           parentID: folderId,
           id: i.id,
-          contentType: "media",//i.contentType,
+          contentType: "media",
+          subType:"audio",
           genre: i.genre,
           album: i.album,
           artist: i.artist,
@@ -410,7 +412,7 @@ function listFolderContents(folderId, ftitle, controlUrl, callback) {
           albumArt: i.albumArt,
           parentID: folderId,
           id: i.id,
-          contentType: "media",//i.contentType,
+          contentType: "media", subType: "video",
           date: i.date,
         }));
 
@@ -422,7 +424,7 @@ function listFolderContents(folderId, ftitle, controlUrl, callback) {
           albumArt: i.albumArt,
           parentID: folderId,
           id: i.id,
-          contentType: "media",// i.contentType,
+          contentType: "media", subType: "image",
           album: i.album,
           date: i.date,
         }));
@@ -438,6 +440,7 @@ function listFolderContents(folderId, ftitle, controlUrl, callback) {
           parentID: folderId,
           id: i.id,
           contentType: i.contentType,
+          subType: "other",
         }));
     }
     callback(null, { title: ftitle, folders, musicFiles, videoFiles, photoFiles, otherFiles });

@@ -153,6 +153,24 @@ This will show the Simple format of controls (as in example 1 above) which will 
 | `supportedAudioExt`      | *Optional* - a list of music format extensions supported, currently 'MP3', 'WAV', 'OGG' used to filter tracks from a DLNA server. Any Tracks not matching these formats will be highlighted in the Meta Data area.. If in future the HTML audio player adds additional formats then these should be added to this list.<br><br> **Possible values:** List of supported audio type extensions.<br> **Default value:** ['MP3', 'WAV', 'OGG']
 | `debug`                | *Optional* - if true, shows some additional messages in the consoles. <br><br> **Possible values:** true/false.<br> **Default value:** false		
 
+##SlideShow API
+
+mySlideShow = new imageSlidShow(domObj)
+
+Methods:
+
+play()	Starts slideshow. Resumes from pause without fade; from stop with fade.
+pause()	Pauses slideshow, preserving time left for current image.
+stop()	Stops slideshow and clears display.
+next()	Advances to next image with fade.
+prev()	Goes to previous image with fade.
+setDuration(ms)	Sets duration each image is shown.
+setFade(ms)	Sets fade transition time.
+setPlaylist(jsonArray)	Replaces playlist with new array of image URLs.
+addImage(url)	Adds a single image URL to playlist.
+removeImage(url)	Removes image matching URL.
+clear()	Clears playlist and resets settings to default.
+
 ## Controls
 Showing DLNA available and being used as music source (it is bright)<BR>
 ![Example of MMM-SimplePlayer audio player module](screenShots/Screenshot_simple.png?raw=true "Screenshot of simple Controls DLNA available/active")<BR>
@@ -199,4 +217,4 @@ If the behaviour of the module isn't as expected, check that folders and files a
 
 Additional capabilities may be added, including showing all Album Images, supporting external control notifications and alternative controls layout.
 
-Happy Listening
+Happy Playing.

@@ -1,0 +1,112 @@
+class ImageSlideshow {
+	constructor(displayElement) {
+		this.displayElement = displayElement;
+		this.playlist = [];
+		this.currentIndex = 0;
+		this.slideDuration = 5000; // ms
+		this.slideFade = 1000; // ms
+		this.timer = null;
+		this.remainingTime = null;
+		this.lastStartTime = null;
+		this.state = 'stopped'; // 'playing', 'paused', 'stopped'
+	}
+
+	setDuration(ms) {
+		this.slideDuration = ms;
+	}
+
+	setFade(ms) {
+		this.slideFade = ms;
+	}
+
+	play() {
+		if (this.state === 'paused') {
+			this.state = 'playing';
+			this.lastStartTime = Date.now();
+			this.timer = setTimeout(() => this.next(), this.remainingTime);
+		} else {
+			this.state = 'playing';
+			this.lastStartTime = Date.now();
+			this.showImage(this.currentIndex, true);
+			this.timer = setTimeout(() => this.next(), this.slideDuration);
+		}
+	}
+
+	pause() {
+		if (this.state === 'playing') {
+			clearTimeout(this.timer);
+			this.remainingTime = this.slideDuration - (Date.now() - this.lastStartTime);
+			this.state = 'paused';
+		}
+	}
+
+	stop() {
+		clearTimeout(this.timer);
+		this.displayElement.innerHTML = '';
+		this.state = 'stopped';
+		this.remainingTime = null;
+	}
+
+	next() {
+		this.currentIndex = (this.currentIndex + 1) % this.playlist.length;
+		this.showImage(this.currentIndex, true);
+		if (this.state === 'playing') {
+			this.lastStartTime = Date.now();
+			this.timer = setTimeout(() => this.next(), this.slideDuration);
+		}
+	}
+
+	prev() {
+		this.currentIndex = (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
+		this.showImage(this.currentIndex, true);
+		if (this.state === 'playing') {
+			this.lastStartTime = Date.now();
+			this.timer = setTimeout(() => this.next(), this.slideDuration);
+		}
+	}
+
+	showImage(index, useFade = false) {
+		const url = this.playlist[index];
+		if (!url) return;
+
+		const slideShowImg = document.createElement('img');
+
+		slideShowImg.style.transition = useFade ? `opacity ${this.slideFade}ms` : '';
+		slideShowImg.style.opacity = '0';
+
+		slideShowImg.id = "slideShowImg";
+		
+		slideShowImg.src = url;
+
+		this.displayElement.innerHTML = '';
+		this.displayElement.appendChild(slideShowImg);
+
+		requestAnimationFrame(() => {
+			slideShowImg.style.opacity = '1';
+		});
+	}
+
+	setPlaylist(json) {
+		this.playlist = Array.isArray(json) ? json : [];
+		this.currentIndex = 0;
+	}
+
+	addImage(url) {
+		this.playlist.push(url);
+	}
+
+	removeImage(url) {
+		this.playlist = this.playlist.filter(img => img !== url);
+		if (this.currentIndex >= this.playlist.length) {
+			this.currentIndex = 0;
+		}
+	}
+
+	clear() {
+		this.stop();
+		this.playlist = [];
+		this.currentIndex = 0;
+		this.slideDuration = 5000;
+		this.slideFade = 1000;
+	}
+}

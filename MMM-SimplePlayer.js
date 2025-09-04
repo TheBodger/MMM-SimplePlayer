@@ -8,15 +8,23 @@ Module.register("MMM-SimplePlayer", {
 		DLNAPlaylistName: "dlnaPlaylist.m3u",
 
 		playlist: [],
+		images: [], // contains any images (photos) returned from the DLNA server
 		playlistOrder: [],//Shuffled/Random ordering of the playlist
 
 		showDLNA: false, //enables DLNA support will load any DLNA servers found initially
 		DLNAPlaylist: [], //holds the DLNA playlist
 		art: [], //matching art for the DLNA play list
-
+		
 		showEvents: false,
 		showMeta: true,
+
 		showAlbumArt: false, //if art is available (usually just DLNA) show it as background to the DIV
+
+		showSlideShowControls: false,
+		slideShowDuration: 10000, //10 seconds
+		slideShowFadeDuration:2000, //2 seconds
+		showSlideShow: false,
+		slideShowSize: "medium",
 
 		startMuted: false,
 		shuffle: false,
@@ -25,6 +33,7 @@ Module.register("MMM-SimplePlayer", {
 		showMini:false, //start with miniplayer
 		miniplayercontrols: ['Back', 'Play', 'Next', 'MiniPlayer'],
 
+		controlsSize: "medium",
 		defaultplayercontrols: ['Back', 'Play', 'Stop', 'Next', 'Volume', 'Shuffle', 'Repeat', 'MiniPlayer', 'DLNA'],
 
 		supportedAudioExt: ['MP3', 'WAV', 'OGG'],
@@ -47,6 +56,7 @@ Module.register("MMM-SimplePlayer", {
 		this.currentTrack = 0;
 		this.isPlaying = false;
 		this.DLNAItems = [];
+		this.DLNAimages = [];
 		//this.DLNAItemsCurrentDisplayIdx = 0;
 		this.DLNAIdxs = [0]; //will contain the idx of item displayed in the current level , used when scrolling left and right, set when scrolling up and down
 		this.DLNACurrentIdx = 0; // points to the current level, ++ -- left and right scrolling
@@ -55,6 +65,8 @@ Module.register("MMM-SimplePlayer", {
 		this.DLNAServersLoaded = false;
 		this.currentServerID = 0;
 		this.trackInfoMsg = "";
+
+		this.slideShow = null;
 
 		this.config.showingDLNA = false; //used to toggle the DLNA button
 		this.showingMini = this.config.showMini; //used to toggle the Miniplayer button
@@ -144,17 +156,26 @@ Module.register("MMM-SimplePlayer", {
 		}
 	},
 
-	socketNotificationReceived(notification, payload) {
+	socketNotificationReceived(notification, payload)
+	{
 		this.addLogEntry(`Received: ${notification}`);
 
-		if (notification === "PLAYLIST_READY") {
+		if (notification === "PLAYLIST_READY")
+		{
 			this.config.playlist = payload[0];
-			this.config.paths = payload[1];
+			this.config.images = payload[1];
 			this.config.art = payload[2];
 			this.radomisePlaylist(this.config.shuffle);
 
-			if (this.config.autoplay && this.config.playlist.length > 0) {
+			if (this.config.autoplay && this.config.playlist.length > 0)
+			{
 				this.setAudioSrc(this.config.playlist[this.config.playlistOrder[this.currentTrack]]);
+			}
+
+			if (this.config.showSlideShow && this.config.images && this.config.images.length > 0)
+			{
+				this.slideShow.setPlaylist(this.config.images);
+				this.slideShow.play();
 			}
 
 		}
@@ -205,6 +226,7 @@ Module.register("MMM-SimplePlayer", {
 	getScripts: function () {
 		return [
 			this.file('touchToolTipHandler.js'), // this file will be loaded straight from the module folder.
+			this.file('slideShow.js'), // this file will be loaded straight from the module folder.
 		]
 	},
 
@@ -251,8 +273,8 @@ Module.register("MMM-SimplePlayer", {
 
 		if (showItem.type == "server") {
 			this.currentServerID = showItem.id;
-			this.DLNAIdxs[0] = 0;
-			this.DLNACurrentIdx = 0; 
+			//this.DLNAIdxs[0] = 0; //seems to defat the proper scolling of servers
+			//this.DLNACurrentIdx = 0; 
 		}
 
 		var showContent = ` ${((showItem.content) ? (showItem.content.album) ? showItem.content.album : "" : "")}`;
@@ -263,12 +285,27 @@ Module.register("MMM-SimplePlayer", {
 
 	},
 
-	buildDom(controlList) {
+	buildDom(controlList)
+	{
 
 		const wrapper = document.createElement("div");
-		wrapper.className = "simple-player";
+		wrapper.className = "simple-player borderered";
 		wrapper.id = "simple-player";
+
 		if (this.config.showAlbumArt) { wrapper.setAttribute("art", ""); }
+
+		if (this.config.showSlideShow)
+		{
+			//add the slidshow as a discrete div
+
+			const slideShow = document.createElement("div");
+			slideShow.id = "slideShow";
+			slideShow.className = "slideShow borderered " + this.config.slideShowSize+"-img";
+			this.slideShow = new ImageSlideshow(slideShow);
+			this.slideShow.setDuration(this.config.slideShowDuration);
+			this.slideShow.setFade(this.config.slideShowFadeDuration);
+			wrapper.appendChild(slideShow);
+		}
 
 		if (this.config.showEvents || this.config.showAlbumArt) {
 			const eventLog = document.createElement("div");
@@ -280,7 +317,8 @@ Module.register("MMM-SimplePlayer", {
 			eventLog.style.padding = "1em";
 			eventLog.innerHTML = "&nbsp;";
 
-			if (this.config.showEvents) {
+			if (this.config.showEvents)
+			{
 				eventLog.innerHTML = "<strong>Event Log:</strong>";
 				eventLog.style.border = "1px solid #ccc";
 
@@ -338,7 +376,7 @@ Module.register("MMM-SimplePlayer", {
 		this.isPlaying = this.audio.paused ? false : true;
 
 		const controls = document.createElement("div");
-		controls.className = "controls medium";
+		controls.className = "borderered controls " + this.config.controlsSize;
 		controls.id = "controls";
 
 		if (!this.config.showMeta) { controls.className += this.audio.playing ? " pulsing-border" : " still-border"; }
@@ -370,7 +408,7 @@ Module.register("MMM-SimplePlayer", {
 			this.trackInfo.setAttribute("data-text", "Artist - Song Title");
 			this.trackInfo.innerHTML = `<i class="fas fa-music"></i>`;
 
-			wrapper.appendChild(this.trackInfo);
+			controls.appendChild(this.trackInfo);
 
 		}
 
@@ -378,15 +416,15 @@ Module.register("MMM-SimplePlayer", {
 
 			this.DLNAItem = document.createElement("div");
 			this.DLNAItem.id = "DLNAItem";
-			this.DLNAItem.className = 'track-info small';
+			this.DLNAItem.className = 'track-info ' + this.config.controlsSize;
 			//console.log("Showing DLNAitems 2", this.DLNAItems.length)
 			this.showDLNAItems();
 			this.DLNAItem.innerHTML = `&nbsp;`;
 
-			wrapper.appendChild(this.DLNAItem);
+			controls.appendChild(this.DLNAItem);
 
 			const DLNAControls = document.createElement("div");
-			DLNAControls.className = "controls medium";
+			DLNAControls.className = "controls " + this.config.controlsSize;;
 			DLNAControls.id = "DLNAControls";
 
 			Object.entries(this.DLNAIconMap).forEach(([action, [icon, unDimmed]]) => {
@@ -401,7 +439,7 @@ Module.register("MMM-SimplePlayer", {
 
 			});
 
-			wrapper.appendChild(DLNAControls);
+			controls.appendChild(DLNAControls);
 		}
 
 		return wrapper;
@@ -706,7 +744,8 @@ Module.register("MMM-SimplePlayer", {
 		sp.style.backgroundRepeat = 'no-repeat';
 	},
 	
-	showDLNAAlbumArt(url) {
+	showDLNAAlbumArt(url)
+	{
 		var sp = document.getElementById("eventLog");
 		sp.setAttribute("art", url);
 		sp.style.backgroundImage = `url("${url}")`;
@@ -758,10 +797,10 @@ Module.register("MMM-SimplePlayer", {
 
 	getTrackInfo() {
 
-		if (!this.config.paths || !this.config.paths[this.currentTrack]) { return; }
+		if (!this.config.playlist || !this.config.playlist[this.currentTrack]) { return; }
 
 		if (this.config.showMeta) {
-			this.sendSocketNotification("GET_METADATA", this.config.paths[this.config.playlistOrder[this.currentTrack]]);
+			this.sendSocketNotification("GET_METADATA", this.config.playlist[this.config.playlistOrder[this.currentTrack]]);
 		}
 	},
 

@@ -1,4 +1,5 @@
 class ImageSlideshow {
+
 	constructor(displayElement) {
 		this.displayElement = displayElement;
 		this.playlist = [];
@@ -9,6 +10,18 @@ class ImageSlideshow {
 		this.remainingTime = null;
 		this.lastStartTime = null;
 		this.state = 'stopped'; // 'playing', 'paused', 'stopped'
+
+		this.slideShowControls = "";
+
+		this.ssControlPositions = [
+			{ "position": ["bottom", "middle"] },
+			{ "position": ["bottom", "middle"] },
+			{ "position": ["middle", "right"] },
+			{ "position": ["middle", "left"] }
+		];
+
+		this.ssControlList = [['ssPlay', "Play", "fa-play"], ['ssStop', "Stop", "fa-stop"], ['ssNext', "Next", "fa-forward"], ['ssPrev', "Prev", "fa-backward"]];
+
 	}
 
 	setDuration(ms) {
@@ -80,6 +93,7 @@ class ImageSlideshow {
 
 		this.displayElement.innerHTML = '';
 		this.displayElement.appendChild(slideShowImg);
+		this.displayElement.appendChild(this.slideShowControls);
 
 		requestAnimationFrame(() => {
 			slideShowImg.style.opacity = '1';
@@ -109,4 +123,38 @@ class ImageSlideshow {
 		this.slideDuration = 5000;
 		this.slideFade = 1000;
 	}
+
+	addControls(moduleRef) {
+
+		//['ssPlay', "Play", "fa-play"]
+		//add the slideshow controls as a discrete child div
+		this.slideShowControls = document.createElement("div");
+		this.slideShowControls.id = "slideShowControls";
+		this.slideShowControls.className = "slideShow-controls";
+
+		//positioning of the buttons is relative to the slidshow div
+		//the ssPrev will be middle left, ssNext middle right, ssPlay bottom left, ssStop bottom right
+
+		this.ssControlList.forEach(action => {
+
+			const button = document.createElement("button");
+			button.id = action[0].toLowerCase() + "Button";
+
+			const valign = this.ssControlPositions[this.ssControlList.indexOf(action)].position[0];
+			const halign = this.ssControlPositions[this.ssControlList.indexOf(action)].position[1];
+			button.className = "fa-button  tooltip-container " + valign + "-" + halign;
+
+			button.addEventListener("click", () => moduleRef.handleAction(action[0]));
+			moduleRef.setupButton(action[0], action[2], true, button); //pass button as it may not be available yet
+
+			button.addEventListener('touchstart', handleTouchStart);
+			button.addEventListener('touchend', handleTouchEnd);
+
+			this.slideShowControls.appendChild(button);
+
+		});
+		return this.slideShowControls;
+
+	}
+
 }

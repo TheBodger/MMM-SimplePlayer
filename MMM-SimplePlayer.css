@@ -7,21 +7,91 @@
   display: inline-block;
 }
 
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position above button */
+  ;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
 .slideShow {
   overflow: hidden;
+  display: inline-block;
+  position: relative;
+  z-index: 1;
 }
 
   .slideShow img {
     object-fit: contain;
     height: 100%;
-    /*width: 100%;*/
-    /*display: block;
-    margin-left: 0;
-    margin-right: auto;*/
+    position:absolute;
   }
 
+.slideShow-controls {
+  visibility: hidden;
+  opacity: 0;
+  top: 8rem;
+  position: relative;
+  padding: 6px 6px;
+  border-radius: 3px;
+  font-size: 14px;
+  z-index: 10;
+  white-space: nowrap;
+  transition: opacity 0.3s;
+}
+
+  .slideShow-controls button {
+    z-index: 11;
+    color: white;
+    filter: drop-shadow(2px 2px LightSlateGrey);
+    position: relative;
+  }
+
+.slideShow:hover .slideShow-controls {
+  visibility: visible;
+  opacity: 1;
+}
+/* Position classes */
+.bottom-middle {
+  bottom: 0;
+  left: 40%;
+  right: 40%;
+}
+
+.middle-right {
+  top: 50%;
+  right: -60%;
+}
+
+.middle-left {
+  top: 50%;
+  left: -35%;
+}
+
 .borderered {
-  /*border: medium aqua solid;*/
+    border: thick red solid;
 }
 
 .small-img {
@@ -30,12 +100,14 @@
   max-width: 21vw;
   max-height: 14vw;
 }
+
 .medium-img {
   width: 21vw;
   height: 14vw;
   max-width: 27vw;
   max-height: 18vw;
 }
+
 .large-img {
   width: 27vw;
   height: 18vw;
@@ -47,15 +119,14 @@
   height: 2em;
   line-height: 1em;
   padding: 0.25em;
-  width:100%;
-  
+  width: 100%;
 }
 
-.controls button {
-  margin: 0 5px;
-  font-size: 1em;
-  padding: 0.25em 0.25em;
-}
+  .controls button {
+    margin: 0 5px;
+    font-size: 1em;
+    padding: 0.25em 0.25em;
+  }
 
 .muted-background::before {
   content: '';
@@ -90,23 +161,23 @@
 
 .track-info {
   width: 100%;
-  overflow:clip;
+  overflow: clip;
   white-space: nowrap;
   position: relative;
   font-size: 1.2em;
-  border-block-style:solid;
-  border-color:brown;
-  box-sizing:border-box;
-  text-align:center;
+  border-block-style: solid;
+  border-color: brown;
+  box-sizing: border-box;
+  text-align: center;
 }
 
-.track-info::before {
-  content: attr(data-text);
-  display: inline-block;
-  position: absolute;
-  animation: keyframes 10s linear infinite;
-  padding-left: 50%; /* push start off screen */
-}
+  .track-info::before {
+    content: attr(data-text);
+    display: inline-block;
+    position: absolute;
+    animation: keyframes 10s linear infinite;
+    padding-left: 50%; /* push start off screen */
+  }
 
 @keyframes keyframes {
   0% {
@@ -119,15 +190,15 @@
 }
 
 .pulsing-border {
-  border: 2px solid #00bcd4; /* Choose your color */
-  padding: 1rem;
+  border: 2px solid #00bcd4;
+  /* Choose your color */ padding: 1rem;
   border-radius: 8px;
   animation: pulseBorder 1.5s infinite;
 }
 
 .still-border {
-  border: 2px solid #00bcd4; /* Choose your color */
-  padding: 1rem;
+  border: 2px solid #00bcd4;
+  /* Choose your color */ padding: 1rem;
   border-radius: 8px;
   opacity: 0.5;
 }
@@ -144,37 +215,4 @@
   100% {
     box-shadow: 0 0 0 0 rgba(0, 188, 212, 0);
   }
-}
-
-.tooltip-container {
-  position: relative;
-  display: inline-block;
-}
-
-.tooltip-text {
-  visibility: hidden;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  padding: 6px 8px;
-  border-radius: 4px;
-  font-size: 14px;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%; /* Position above button */
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.tooltip-container:hover .tooltip-text {
-  visibility: visible;
-  opacity: 1;
-}
-
-.tooltip-container.show-tooltip .tooltip-text {
-  visibility: visible;
-  opacity: 1;
 }

@@ -299,12 +299,21 @@ Module.register("MMM-SimplePlayer", {
 			//add the slidshow as a discrete div
 
 			const slideShow = document.createElement("div");
+
 			slideShow.id = "slideShow";
-			slideShow.className = "slideShow borderered " + this.config.slideShowSize+"-img";
+			slideShow.className = "slideShow borderered " + this.config.slideShowSize + "-img";
+
 			this.slideShow = new ImageSlideshow(slideShow);
 			this.slideShow.setDuration(this.config.slideShowDuration);
 			this.slideShow.setFade(this.config.slideShowFadeDuration);
+
+			if (this.config.showSlideShowControls)
+			{
+				slideShow.appendChild(this.slideShow.addControls(this));	
+			}
+
 			wrapper.appendChild(slideShow);
+
 		}
 
 		if (this.config.showEvents || this.config.showAlbumArt) {
@@ -599,6 +608,26 @@ Module.register("MMM-SimplePlayer", {
 		const Icon = document.getElementById(bAction+"icon");
 
 		switch (action) {
+
+			case "ssNext":
+				this.slideShow.next();
+				return;
+
+			case "ssPrev":
+				this.slideShow.prev();
+				return;
+
+			case "ssStop":
+				this.slideShow.stop();
+				return;
+
+			case "ssPlay":
+				this.slideShow.play();
+				return;
+
+			case "ssPlay":
+				this.slideShow.pause();
+				return;
 
 			case "MiniPlayer":
 				this.showingMini = !this.showingMini;

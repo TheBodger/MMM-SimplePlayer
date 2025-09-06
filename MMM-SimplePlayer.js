@@ -289,7 +289,7 @@ Module.register("MMM-SimplePlayer", {
 	{
 
 		const wrapper = document.createElement("div");
-		wrapper.className = "simple-player borderered";
+		wrapper.className = "simple-player";
 		wrapper.id = "simple-player";
 
 		if (this.config.showAlbumArt) { wrapper.setAttribute("art", ""); }
@@ -301,7 +301,7 @@ Module.register("MMM-SimplePlayer", {
 			const slideShow = document.createElement("div");
 
 			slideShow.id = "slideShow";
-			slideShow.className = "slideShow borderered " + this.config.slideShowSize + "-img";
+			slideShow.className = "slideShow " + this.config.slideShowSize + "-img";
 
 			this.slideShow = new ImageSlideshow(slideShow);
 			this.slideShow.setDuration(this.config.slideShowDuration);
@@ -385,7 +385,7 @@ Module.register("MMM-SimplePlayer", {
 		this.isPlaying = this.audio.paused ? false : true;
 
 		const controls = document.createElement("div");
-		controls.className = "borderered controls " + this.config.controlsSize;
+		controls.className = "controls " + this.config.controlsSize;
 		controls.id = "controls";
 
 		if (!this.config.showMeta) { controls.className += this.audio.playing ? " pulsing-border" : " still-border"; }

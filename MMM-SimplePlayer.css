@@ -5,6 +5,7 @@
   height: 100%;
   box-sizing: border-box;
   display: inline-block;
+  position:relative;
 }
 
 .tooltip-container {
@@ -24,7 +25,6 @@
   position: absolute;
   z-index: 1;
   bottom: 125%; /* Position above button */
-  ;
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
@@ -37,36 +37,40 @@
 }
 
 .slideShow {
-  overflow: hidden;
+  /*overflow: hidden;*/
   display: inline-block;
   position: relative;
   z-index: 1;
+  /*border: thick green solid;*/
 }
 
   .slideShow img {
     object-fit: contain;
     height: 100%;
-    position:absolute;
+    position: relative;
+    /*border: thick yellow solid;*/
   }
 
 .slideShow-controls {
   visibility: hidden;
   opacity: 0;
-  top: 8rem;
-  position: relative;
+  top: 85%;
+  position: absolute;
   padding: 6px 6px;
   border-radius: 3px;
   font-size: 14px;
   z-index: 10;
   white-space: nowrap;
   transition: opacity 0.3s;
+/*  border: thick blue solid;*/
+  width: 100%
 }
 
   .slideShow-controls button {
     z-index: 11;
     color: white;
     filter: drop-shadow(2px 2px LightSlateGrey);
-    position: relative;
+    position: absolute;
   }
 
 .slideShow:hover .slideShow-controls {
@@ -74,24 +78,21 @@
   opacity: 1;
 }
 /* Position classes */
-.bottom-middle {
-  bottom: 0;
-  left: 40%;
-  right: 40%;
+.bottom-middle1 {
+  left: 48%;
 }
-
+.bottom-middle2 {
+  left: 52%;
+}
 .middle-right {
-  top: 50%;
-  right: -60%;
+  right: 10%;
 }
-
 .middle-left {
-  top: 50%;
-  left: -35%;
+  left: 10%;
 }
 
 .borderered {
-    border: thick red solid;
+ /*   border: thick red solid;*/
 }
 
 .small-img {
@@ -120,6 +121,7 @@
   line-height: 1em;
   padding: 0.25em;
   width: 100%;
+  position:relative;
 }
 
   .controls button {
@@ -144,6 +146,7 @@
 .event-log-body {
   padding: 0.0em;
   margin-block: 0.0em;
+  position: relative;
 }
 
 .fa-button {
@@ -169,6 +172,7 @@
   border-color: brown;
   box-sizing: border-box;
   text-align: center;
+  position: relative;
 }
 
   .track-info::before {

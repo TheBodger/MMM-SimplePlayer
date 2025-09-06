@@ -14,8 +14,8 @@ class ImageSlideshow {
 		this.slideShowControls = "";
 
 		this.ssControlPositions = [
-			{ "position": ["bottom", "middle"] },
-			{ "position": ["bottom", "middle"] },
+			{ "position": ["bottom", "middle1"] },
+			{ "position": ["bottom", "middle2"] },
 			{ "position": ["middle", "right"] },
 			{ "position": ["middle", "left"] }
 		];

@@ -175,17 +175,19 @@ mySlideShow = new imageSlidShow(domObj)
 
 Methods:
 
-play()	Starts slideshow. Resumes from pause without fade; from stop with fade.
-pause()	Pauses slideshow, preserving time left for current image.
-stop()	Stops slideshow and clears display.
-next()	Advances to next image with fade.
-prev()	Goes to previous image with fade.
-setDuration(ms)	Sets duration each image is shown.
-setFade(ms)	Sets fade transition time.
-setPlaylist(jsonArray)	Replaces playlist with new array of image URLs.
-addImage(url)	Adds a single image URL to playlist.
-removeImage(url)	Removes image matching URL.
-clear()	Clears playlist and resets settings to default.
+```
+  play()	Starts slideshow. Resumes from pause without fade; from stop with fade.
+  pause()	Pauses slideshow, preserving time left for current image.
+  stop()	Stops slideshow and clears display.
+  next()	Advances to next image with fade.
+  prev()	Goes to previous image with fade.
+  setDuration(ms)	Sets duration each image is shown.
+  setFade(ms)	Sets fade transition time.
+  setPlaylist(jsonArray)	Replaces playlist with new array of image URLs.
+  addImage(url)	Adds a single image URL to playlist.
+  removeImage(url)	Removes image matching URL.
+  clear()	Clears playlist and resets settings to default.
+```
 
 ## Controls
 Showing DLNA available and being used as music source (it is bright)<BR>
@@ -210,7 +212,7 @@ The playback controls from left to right in the example screenshot above are:
 
 The Text area immediately above the DLNA controls displays the current item within the Folder tree sent from the selected DLNA server. Some of the folders will be empty and this will be indicated with a message in the text area. 
 
-If No DLNA servers is displayed, then check that the expected DLNA servers are running and visible across the network. Sometimes I found the Synology DLNA server testing was carried out on stopped responding and need to be restarted.
+If No DLNA servers are displayed, then check that the expected DLNA servers are running and visible across the network. Sometimes I found the Synology DLNA server testing was carried out on stopped responding and need to be restarted.
 
 The DLNA controls from left to right in the example screenshot above are:
 | Control                  | Details
@@ -224,6 +226,14 @@ The DLNA controls from left to right in the example screenshot above are:
 | `Open DLNA playlist`	| Loads the current DLNA playlist from the location specified in the config. Always overwrites whatever was there.
 | `Scroll Left`	| Scrolls the display of the current DLNA list of folders/media left, showing the parent of the current item. If the displayed item is a server no more scrolling left occurs
 | `Scroll Right`	| Scrolls the display of the current DLNA list of folders/media right, showing the child of the current item. If the displayed item is media no more scrolling right occurs
+
+If slideshow controls are enabled, then when the mouse is moved over the slideshow area, the following controls are shown:
+```
+  Previous Image	- Goes to the previous image in the list
+  Play/Pause		- Pauses or resumes the slideshow
+  Stop			- Stops the slideshow and resets the slideshow timer
+  Next Image		- Goes to the next image in the list
+```
 
 ## Comments
 

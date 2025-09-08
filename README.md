@@ -138,6 +138,8 @@ DLNA servers are not always visible immediately the module starts. The module wi
 
 The response from DLNA servers should meet standards but in testing in some situations a message is received that is not expected. The module will try to handle these situations but if the DLNA server is not behaving as expected then some features may not work.
 
+All sizing and positioning of elements within the module is done using CSS. Specific settings can be overridden by adding rules to the MagicMirror custom.css file, or simply edit the CSS file within the module folder.
+
 ## Configuration Options
 
 | Option                  | Details
@@ -150,6 +152,7 @@ The response from DLNA servers should meet standards but in testing in some situ
 | `showMini`                | *Optional* - if true, displays the miniPlayer, using the list of controls in miniplayercontrols. <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `miniplayercontrols`      | *Optional* - a list of buttons to display in the control area of the player when the mini player is displayed.<br><br> **Possible values:** Any of the controls shown in defaultplayercontrols.<br> **Default value:** ['Back', 'Play', 'Next', 'MiniPlayer']
 | `defaultplayercontrols`      | *Optional* - a list of buttons to display in the control area of the player when the default player is displayed.<br><br> **Possible values:** Any of the controls shown in the default values:<br> **Default value:** ['Back', 'Play', 'Stop', 'Next', 'Volume', 'Shuffle', 'Repeat', 'MiniPlayer', 'DLNA']
+| `controlsSize`                | *Optional* - The size of the control buttons  <br><br> **Possible values:** small,medium or large.<br> **Default value:** medium
 | `showEvents`                | *Optional* - if true, a window showing all events emitted from the player is displayed. Used primarily for debugging purposes <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `showMeta`                | *Optional* - if true, the meta data is loaded from the track and displayed: Artist - Album - Track# - Track title (unsupported format)<br><br> **Possible values:** true/false.<br> **Default value:** true
 | `showAlbumArt`                | *Optional* - if true, displays any album art provided from the DLNA server above the main controls. Support for showing Art from other locations is being developed. <br><br> **Possible values:** true/false.<br> **Default value:** false
@@ -159,6 +162,11 @@ The response from DLNA servers should meet standards but in testing in some situ
 | `DLNAPlaylistName`      | *Optional* - the name of the local DLNAplaylist the module will use to save and open from. This must have extension of m3u.<br><br> **Possible values:** any valid file name and type.<br> **Default value:** "dlnaPlaylist.m3u"
 | `showDLNA`                | *Optional* - if true, shows the DLNA portion of the control panel. <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `supportedAudioExt`      | *Optional* - a list of music format extensions supported, currently 'MP3', 'WAV', 'OGG' used to filter tracks from a DLNA server. Any Tracks not matching these formats will be highlighted in the Meta Data area.. If in future the HTML audio player adds additional formats then these should be added to this list.<br><br> **Possible values:** List of supported audio type extensions.<br> **Default value:** ['MP3', 'WAV', 'OGG']
+| `showSlideShow`                | *Optional* - if true, shows the slideShow area for displaying images <br><br> **Possible values:** true/false.<br> **Default value:** false
+| `slideShowDuration`                | *Optional* - The time in milliseconds that each slide is displayed before the next one is shown. <br><br> **Possible values:** An integer of milliseconds<br> **Default value:** 10000 (10 seconds)
+| `slideShowFadeDuration`                | *Optional* - The time in milliseconds that slides transition from the current to the next one.<br><br> **Possible values:** An integer of milliseconds<br> **Default value:** 2000 (2 seconds)
+| `showSlideShowControls`                | *Optional* - if true, shows controls over the slideshow when the mouse is moved over it. <br><br> **Possible values:** true/false.<br> **Default value:** false
+| `slideShowSize`                | *Optional* - The size of the images in the slideshow.<br><br> **Possible values:** small,medium or large.<br> **Default value:** medium
 | `debug`                | *Optional* - if true, shows some additional messages in the consoles. <br><br> **Possible values:** true/false.<br> **Default value:** false		
 
 ##SlideShow API

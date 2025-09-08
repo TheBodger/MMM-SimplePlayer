@@ -33,8 +33,11 @@ module.exports = NodeHelper.create({
 		this.DLNAShowing = false;
 	},
 
-	socketNotificationReceived(notification, payload)
+	socketNotificationReceived(notification, fullpayload)
 	{
+		var identifier = fullpayload.identifier;
+		var payload = fullpayload.payload;
+
 		if (payload && payload.returnPlaylist) { this.DLNAShowing = payload.returnPlaylist };
 
 		if (notification === "CONFIG") {
@@ -50,12 +53,12 @@ module.exports = NodeHelper.create({
 			//get the files for the web side of the module
 			const files = fs.readdirSync(payload).filter(f => f.match(/\.(mp3|wav|ogg)$/i)).map(f => `${path.join(payload, f)}`);
 
-			this.sendSocketNotification("PLAYLIST_READY", [files, null,null]);
+			this.sendSocketNotification(identifier+">"+ "PLAYLIST_READY", [files, null,null]);
 		}
 
 		if (notification === "LOAD_PLAYLIST") {
 			try {
-				this.sendSocketNotification("PLAYLIST_READY", [this.getPlaylist(payload), null, null]);
+				this.sendSocketNotification(identifier+">"+ "PLAYLIST_READY", [this.getPlaylist(payload), null, null]);
 			} catch (err) {
 				console.error("Error loading playlist:", err);
 			}
@@ -67,7 +70,7 @@ module.exports = NodeHelper.create({
 
 			this.setInitialValues();
 
-			this.getDLNAServers();
+			this.getDLNAServers(identifier);
 
 			//wait for 10 seconds and then stop finding servers
 			setTimeout(() => {
@@ -110,7 +113,7 @@ module.exports = NodeHelper.create({
 
 					//console.log("left", payload.currentServerID);
 
-					this.getDLNAItems(payload.action, payload.item, payload.currentServerID);
+					this.getDLNAItems(identifier, payload.action, payload.item, payload.currentServerID);
 
 					return;
 
@@ -119,7 +122,7 @@ module.exports = NodeHelper.create({
 					//otherwise check for children and if present return them and if not present search and return
 
 					//console.log("right", payload.currentServerID);
-					this.getDLNAItems(payload.action, payload.item, payload.currentServerID);
+					this.getDLNAItems(identifier, payload.action, payload.item, payload.currentServerID);
 
 					return;
 			}
@@ -128,7 +131,7 @@ module.exports = NodeHelper.create({
 
 		if (notification === "GET_METADATA")
 		{
-			this.getMetaData(payload);
+			this.getMetaData(identifier, payload);
 		}
 
 		if (notification === "CLEAR_DLNA_PLAYLIST") {
@@ -136,11 +139,11 @@ module.exports = NodeHelper.create({
 			this.DLNAtrackPaths = [];
 			this.DLNAtrackArt = [];
 			this.DLNAImages = [];
-			if (this.DLNAShowing) { this.sendSocketNotification("PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAImages, this.DLNAtrackArt]) }
+			if (this.DLNAShowing) { this.sendSocketNotification(identifier+">"+ "PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAImages, this.DLNAtrackArt]) }
 
 			//reload the servers, server id here shold always be -1
 			this.setInitialValues();
-			this.getDLNAServers();
+			this.getDLNAServers(identifier);
 			//wait for 10 seconds and then stop finding servers
 			setTimeout(() => {
 				console.log('Stopping server discovery...');
@@ -153,7 +156,7 @@ module.exports = NodeHelper.create({
 
 		if (notification === "GET_DLNA_PLAYLIST") //send back the current playlist
 		{
-			this.sendSocketNotification("PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAImages, this.DLNAtrackArt]);
+			this.sendSocketNotification(identifier+">"+ "PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAImages, this.DLNAtrackArt]);
 		}
 
 		if (notification === "SAVE_DLNA_PLAYLIST") //save the current playlist
@@ -166,7 +169,7 @@ module.exports = NodeHelper.create({
 		{
 			var DLNAPlaylistPath = path.join(payload.musicDirectory, payload.DLNAPlaylistName);
 			[ this.DLNAtrackPaths, this.DLNAtrackArt ] = this.getDLNAPlaylist(DLNAPlaylistPath);
-			if (payload.returnPlaylist) { this.sendSocketNotification("PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAImages, this.DLNAtrackArt]) };
+			if (payload.returnPlaylist) { this.sendSocketNotification(identifier+">"+ "PLAYLIST_READY", [this.DLNAtrackPaths, this.DLNAImages, this.DLNAtrackArt]) };
 		}
 
 		if (notification === "ADD_DLNA_ITEM")
@@ -176,7 +179,7 @@ module.exports = NodeHelper.create({
 
 			this.currentServerIdx = this.findItemIndexById(this.servers, payload.currentServerID);
 
-			this.loadDLNAitems(this.currentServerIdx, payload.item.id , true, this.loadPlaylistCallback);
+			this.loadDLNAitems(identifier, this.currentServerIdx, payload.item.id , true, this.loadPlaylistCallback);
 		}
 
 		if (notification === "REMOVE_DLNA_ITEM") {
@@ -185,12 +188,12 @@ module.exports = NodeHelper.create({
 
 			this.currentServerIdx = this.findItemIndexById(this.servers, payload.currentServerID);
 
-			this.loadDLNAitems(this.currentServerIdx, payload.item.id, true, this.removePlaylistCallback);
+			this.loadDLNAitems(identifier, this.currentServerIdx, payload.item.id, true, this.removePlaylistCallback);
 		}
 		
 	},
 
-	loadPlaylistCallback :function (err, searchNodes)
+	loadPlaylistCallback: function (err, searchNodes, identifier)
 	{
 
 		if (err)
@@ -210,7 +213,7 @@ module.exports = NodeHelper.create({
 
 			if (self.DLNAShowing) {
 				try {
-					self.sendSocketNotification("PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAImages, self.DLNAtrackArt]);
+					self.sendSocketNotification(identifier+">"+ "PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAImages, self.DLNAtrackArt]);
 				} catch (err) {
 					console.error("Error loading playlist:", err);
 				}
@@ -243,7 +246,7 @@ module.exports = NodeHelper.create({
 		});
 	},
 
-	removePlaylistCallback: function (err, searchNodes) {
+	removePlaylistCallback: function (err, searchNodes, identifier) {
 
 		if (err) {
 			console.error('Err:', err)
@@ -259,7 +262,7 @@ module.exports = NodeHelper.create({
 
 			if (self.DLNAShowing) {
 				try {
-					self.sendSocketNotification("PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAImages, self.DLNAtrackArt]);
+					self.sendSocketNotification(identifier+">"+ "PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAImages, self.DLNAtrackArt]);
 				} catch (err) {
 					console.error("Error loading playlist:", err);
 				}
@@ -278,7 +281,7 @@ module.exports = NodeHelper.create({
 
 				var index = self.DLNAtrackPaths.indexOf(child.url);
 
-				if (index !== -1) {
+				if (index !== -1) {onCompleteCallback
 					if (child.subType == "audio") {
 						self.DLNAtrackPaths.splice(index, 1);
 						self.DLNAtrackArt.splice(index, 1);
@@ -292,7 +295,7 @@ module.exports = NodeHelper.create({
 		});
 	},
 
-	onCompleteCallback: function (err, searchNodes) {
+	onCompleteCallback: function (err, searchNodes, identifier) {
 	//searching for node has finished time to check if all nodes completed searching 
 
 		if (err) {
@@ -313,13 +316,13 @@ module.exports = NodeHelper.create({
 
 			}
 
-			self.sendSocketNotification("NEW_DLNA_ITEMS", self.populateDLNAList_children(node));
+			self.sendSocketNotification(identifier+">"+ "NEW_DLNA_ITEMS", self.populateDLNAList_children(node));
 
 		}
 
 	},
 
-	loadDLNAitems: function (serverIDX, id, recurse = false, callback = '') {
+	loadDLNAitems: function (identifier, serverIDX, id, recurse = false, callback = '') {
 
 		this.currentServer = this.servers[serverIDX];
 		this.currentNodeID = id;
@@ -336,7 +339,7 @@ module.exports = NodeHelper.create({
 
 			if (self.DLNAShowing) {
 				try {
-					self.sendSocketNotification("PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAImages, self.DLNAtrackArt]);
+					self.sendSocketNotification(identifier+">"+ "PLAYLIST_READY", [self.DLNAtrackPaths, self.DLNAImages, self.DLNAtrackArt]);
 				} catch (err) {
 					console.error("Error loading playlist:", err);
 				}
@@ -347,7 +350,7 @@ module.exports = NodeHelper.create({
 
 			self = this;
 
-			getNodeChildren(this.currentServer, searchNode, recurse, resetSearchNodes, callback)
+			getNodeChildren(identifier, this.currentServer, searchNode, recurse, resetSearchNodes, callback)
 		}
 	},
 
@@ -363,7 +366,7 @@ module.exports = NodeHelper.create({
 
 	},
 
-	getDLNAItems(action, item, serverID)
+	getDLNAItems(identifier, action, item, serverID)
 	{
 		var DLNAList = [];
 
@@ -392,7 +395,7 @@ module.exports = NodeHelper.create({
 
 		if (result.node && result.node.children.length>0) {
 
-			this.sendSocketNotification("NEW_DLNA_ITEMS", DLNAList);
+			this.sendSocketNotification(identifier+">"+ "NEW_DLNA_ITEMS", DLNAList);
 
 			return;
 
@@ -403,7 +406,7 @@ module.exports = NodeHelper.create({
 
 		this.currentServerIdx = this.findItemIndexById(this.servers, serverID);
 
-		this.loadDLNAitems(this.currentServerIdx,result.node.id);
+		this.loadDLNAitems(identifier, this.currentServerIdx,result.node.id);
 
 	},
 
@@ -454,13 +457,14 @@ module.exports = NodeHelper.create({
 
 	},
 
-	getDLNAServers: function ()
+	getDLNAServers: function (identifier)
 	{
 		//get any servers and send them back as part of a list that will be added to as new servers are found
 
 		var DLNAList = [];
 
-		findServers((err, result) => {
+		findServers(identifier,(err, result, identifier) => {
+			
 			if (err) console.error(err);
 			else {
 
@@ -480,7 +484,7 @@ module.exports = NodeHelper.create({
 					DLNAList.push(newItem);
 				}
 
-				this.sendSocketNotification("NEW_DLNA_ITEMS", DLNAList);
+				this.sendSocketNotification(identifier+">"+ "NEW_DLNA_ITEMS", DLNAList);
 			}
 		});
 
@@ -601,7 +605,7 @@ module.exports = NodeHelper.create({
 		fs.writeFileSync(filePath, playlistEntries);
 	},
 
-	async getMetaData(payload)
+	async getMetaData(identifier, payload)
 	{
 		/*
 		* Reads metadata from a media file using music-metadata library.
@@ -610,6 +614,8 @@ module.exports = NodeHelper.create({
 		* if it is a URL uses music-metadata
 		*/
 		//console.log(payload);
+
+		const globalIdentifier = identifier;
 
 		const missingMetaData = { title: "Unknown Title", artist: "Unknown Artist", album: "Unknown Album", track: "Unknown Track" };
 
@@ -633,10 +639,10 @@ module.exports = NodeHelper.create({
 						size // Important to pass the content-length
 					});
 					const common = metadata.common || missingMetaData;
-					this.sendSocketNotification("METADATA_RESULT", { common });
+					this.sendSocketNotification(globalIdentifier +">"+ "METADATA_RESULT", { common });
 				} catch (error) {
 					console.error('Error parsing metadata:', error.message);
-					this.sendSocketNotification("METADATA_RESULT", { common: missingMetaData });
+					this.sendSocketNotification(globalIdentifier +">"+ "METADATA_RESULT", { common: missingMetaData });
 				}
 			})();
 		}
@@ -646,10 +652,10 @@ module.exports = NodeHelper.create({
 				try {
 					const metadata = await parseFile(payload);
 					const common = metadata.common || missingMetaData;
-					this.sendSocketNotification("METADATA_RESULT", { common });
+					this.sendSocketNotification(globalIdentifier +">"+ "METADATA_RESULT", { common });
 				} catch (error) {
 					console.error('Error reading metadata:', error.message);
-					this.sendSocketNotification("METADATA_RESULT", { common: missingMetaData });
+					this.sendSocketNotification(globalIdentifier +">"+ "METADATA_RESULT", { common: missingMetaData });
 				}
 			})();
 		}

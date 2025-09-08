@@ -92,6 +92,8 @@ class FolderTree {
 }
 
 var globalCallback = null;
+var globalidentifier = null;
+
 var searchNodes = [];
 
 function allValuesTrue(data) {
@@ -100,7 +102,7 @@ function allValuesTrue(data) {
   );
 }
 
-function getNodeChildren(server, node, recurse, resetSearchNodes, onCompleteCallback)
+function getNodeChildren(identifier, server, node, recurse, resetSearchNodes, onCompleteCallback)
 {
 
   if (resetSearchNodes) { searchNodes = []; }
@@ -158,18 +160,19 @@ function getNodeChildren(server, node, recurse, resetSearchNodes, onCompleteCall
       if (weRecurse && subcontent.folders.length > 0) {
         subcontent.folders.forEach(folder => {
           const node = { id: folder.id };
-          getNodeChildren(server, node, recurse, false, onCompleteCallback)
+          getNodeChildren(identifier, server, node, recurse, false, onCompleteCallback)
         });
       }
 
-      onCompleteCallback(null,searchNodes)
+      onCompleteCallback(null, searchNodes, identifier)
     }
 
   });
 }
 
-function findServers(callback) {
-    globalCallback = callback
+function findServers(identifier,callback) {
+  globalCallback = callback;
+  globalidentifier = identifier;
     client.browse('urn:schemas-upnp-org:service:ContentDirectory:1');
 }
 
@@ -185,12 +188,12 @@ client.on('response', (response) => {
     var statusCode = response.statusCode;
     var referrer = response.referrer;
     console.log('DLNA Server Found:', headers.LOCATION);
-    getServerDetails(headers.LOCATION, globalCallback);
+  getServerDetails(headers.LOCATION, globalCallback, globalidentifier);
 });
 
-function getServerDetails(locationUrl, callback) {
+function getServerDetails(locationUrl, callback, identifier) {
     const hostDetails = new URL(locationUrl);
-    fetchXML(locationUrl, (err, xml) => {
+    fetchXML(identifier, locationUrl, (err, xml, identifier) => {
         if (err) return callback(err);
 
         const parser = new DOMParser();
@@ -222,10 +225,10 @@ function getServerDetails(locationUrl, callback) {
             services
         };
 
-        callback(null, { details, hostDetails });
+      callback(null, { details, hostDetails }, identifier);
     });
 }
-function fetchXML(locationUrl, callback) {
+function fetchXML(identifier,locationUrl, callback) {
     const urlParts = parse(locationUrl);
     const protocol = urlParts.protocol === 'https:' ? https : http;
 
@@ -236,7 +239,7 @@ function fetchXML(locationUrl, callback) {
         res.on('data', chunk => { data += decoder.write(chunk); });
         res.on('end', () => {
             data += decoder.end();
-            callback(null, data);
+            callback(null, data, identifier);
         });
     });
 

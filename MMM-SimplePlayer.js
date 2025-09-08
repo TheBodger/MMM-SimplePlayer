@@ -1,4 +1,5 @@
 Module.register("MMM-SimplePlayer", {
+
 	defaults: {
 		autoplay: true,
 		playTracks: true, // play from directory
@@ -48,27 +49,32 @@ Module.register("MMM-SimplePlayer", {
 		}
 	},
 
-	start()
+	reset()
 	{
-
-		this.sendNotificationToNodeHelper("CONFIG", { config: { debug: this.config.debug } });
-
 		this.currentTrack = 0;
 		this.isPlaying = false;
 		this.DLNAItems = [];
 		this.DLNAimages = [];
-		//this.DLNAItemsCurrentDisplayIdx = 0;
 		this.DLNAIdxs = [0]; //will contain the idx of item displayed in the current level , used when scrolling left and right, set when scrolling up and down
 		this.DLNACurrentIdx = 0; // points to the current level, ++ -- left and right scrolling
 		this.returnedDLNAItems = [{ is: "-99", type: "server", name: "No DLNA Servers" }];
 		this.loadDLNAItems();
 		this.DLNAServersLoaded = false;
 		this.currentServerID = 0;
+	},
+
+	start()
+	{
+
+		this.sendNotificationToNodeHelper("CONFIG", { config: { debug: this.config.debug } });
+
+		this.reset();
+
 		this.trackInfoMsg = "";
 
 		this.slideShow = null;
 
-		this.config.showingDLNA = false; //used to toggle the DLNA button
+		this.showingDLNA = false; //used to toggle the DLNA button
 		this.showingMini = this.config.showMini; //used to toggle the Miniplayer button
 
 		this.startAudio();
@@ -87,7 +93,7 @@ Module.register("MMM-SimplePlayer", {
 
 		if (this.config.showDLNA)
 		{
-			this.iconMap["DLNA"] = ["fa-server", this.config.showingDLNA];
+			this.iconMap["DLNA"] = ["fa-server", this.showingDLNA];
 		}
 		else
 		{
@@ -114,8 +120,8 @@ Module.register("MMM-SimplePlayer", {
 
 	},
 
-	sendNotificationToNodeHelper: function (notification, payload) {
-		this.sendSocketNotification(notification, payload);
+	sendNotificationToNodeHelper: function (notification, payload) { //special to send the discrete module id each time
+		this.sendSocketNotification(notification, { identifier: this.identifier, payload: payload });
 	},
 
 	isSupportedAudio(url) {
@@ -156,9 +162,14 @@ Module.register("MMM-SimplePlayer", {
 		}
 	},
 
-	socketNotificationReceived(notification, payload)
+	socketNotificationReceived(fullnotification, payload)
 	{
-		this.addLogEntry(`Received: ${notification}`);
+		this.addLogEntry(`Received: ${fullnotification}`);
+
+		var identifier = fullnotification.split(">")[0];
+		var notification = fullnotification.split(">")[1];
+
+		if (identifier != this.identifier) { return; }
 
 		if (notification === "PLAYLIST_READY")
 		{
@@ -390,9 +401,19 @@ Module.register("MMM-SimplePlayer", {
 
 		if (!this.config.showMeta) { controls.className += this.audio.playing ? " pulsing-border" : " still-border"; }
 
-		controlList.forEach(action => {
+		controlList.forEach(action =>
+		{
 
-			const [icon, unDimmed] = this.iconMap[action];
+			var [icon, unDimmed] = ["", ""]
+
+			if (action == "DLNA")
+			{
+				[icon, unDimmed] = ["fa-server", this.showingDLNA]; //special case as we need to be dynamic with showingDLNA
+			}
+			else
+			{
+				[icon, unDimmed] = this.iconMap[action];
+			}
 
 			const button = document.createElement("button");
 			button.id = action.toLowerCase() + "Button";
@@ -404,6 +425,11 @@ Module.register("MMM-SimplePlayer", {
 			controls.appendChild(button);
 
 			this.addTooltip(button, action);
+
+			if (action == "Volume") //need some special handling for volume as it is not a button action
+			{
+				this.handleAction("volumechange");
+			} //force the correct volume icon to be showed
 
 		});
 
@@ -551,18 +577,18 @@ Module.register("MMM-SimplePlayer", {
 
 			case "Add":
 				//add the current displayed item and all children to the DLNA playlist
-				this.sendNotificationToNodeHelper("ADD_DLNA_ITEM", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]], returnPlaylist: this.config.showingDLNA });
+				this.sendNotificationToNodeHelper("ADD_DLNA_ITEM", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]], returnPlaylist: this.showingDLNA });
 				return;
 			case "Remove":
 				//removes the current displayed item and all children from the DLNA playlist
-				this.sendNotificationToNodeHelper("REMOVE_DLNA_ITEM", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]], returnPlaylist: this.config.showingDLNA });
+				this.sendNotificationToNodeHelper("REMOVE_DLNA_ITEM", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]], returnPlaylist: this.showingDLNA });
 				return;
 
 			case "Clear":
 				//clears the current DLNA playlist
 				this.DLNACurrentIdx = 0;
 				this.DLNAIdxs = [0];
-				this.sendNotificationToNodeHelper("CLEAR_DLNA_PLAYLIST", { returnPlaylist: this.config.showingDLNA });
+				this.sendNotificationToNodeHelper("CLEAR_DLNA_PLAYLIST", { returnPlaylist: this.showingDLNA });
 				return;
 			case "Save":
 				//saves the current DLNA playlist to a file
@@ -570,20 +596,20 @@ Module.register("MMM-SimplePlayer", {
 				return;
 			case "Open":
 				//opens a saved DLNA playlist file and loads it into the DLNA playlist
-				this.sendNotificationToNodeHelper("OPEN_DLNA_PLAYLIST", { musicDirectory: this.config.musicDirectory, DLNAPlaylistName: this.config.DLNAPlaylistName, returnPlaylist: this.config.showingDLNA });
+				this.sendNotificationToNodeHelper("OPEN_DLNA_PLAYLIST", { musicDirectory: this.config.musicDirectory, DLNAPlaylistName: this.config.DLNAPlaylistName, returnPlaylist: this.showingDLNA });
 				return;
 			case "ScrollLeft":
 				//if the current item displayed is a server cant scroll left
 
 				if (this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]].type == "server" || !this.DLNAServersLoaded) { return; }
-				this.sendNotificationToNodeHelper("DLNA_ACTION", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]], returnPlaylist: this.config.showingDLNA });
+				this.sendNotificationToNodeHelper("DLNA_ACTION", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]], returnPlaylist: this.showingDLNA });
 				this.DLNACurrentIdx--;
 				return;
 
 			case "ScrollRight":
 				//if current type is media, or no servers loaded yet, cant scroll right
 				if (this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]].type == "media" || !this.DLNAServersLoaded) { return; }
-				this.sendNotificationToNodeHelper("DLNA_ACTION", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]], returnPlaylist: this.config.showingDLNA });
+				this.sendNotificationToNodeHelper("DLNA_ACTION", { action: action, currentServerID: this.currentServerID, item: this.DLNAItems[this.DLNAIdxs[this.DLNACurrentIdx]], returnPlaylist: this.showingDLNA });
 				this.DLNACurrentIdx++;
 				if (this.DLNACurrentIdx > this.DLNAIdxs.length-1) { this.DLNAIdxs[this.DLNACurrentIdx] = 0; }
 				return;
@@ -631,6 +657,7 @@ Module.register("MMM-SimplePlayer", {
 
 			case "MiniPlayer":
 				this.showingMini = !this.showingMini;
+				this.reset(); //here we clear everything out and start from scratch in terms of servers and loaded DLNA data
 				this.updateDom();
 				this.startAudio();
 				return;
@@ -753,8 +780,8 @@ Module.register("MMM-SimplePlayer", {
 
 			case "DLNA":
 				if (!this.config.showDLNA) { return; }
-				this.config.showingDLNA = !this.config.showingDLNA;
-				this.setupButton(action, this.iconMap[action][0], this.config.showingDLNA, null);
+				this.showingDLNA = !this.showingDLNA;
+				this.setupButton(action, this.iconMap[action][0], this.showingDLNA, null);
 				//now tell node helper to toggle the DLNA playlist depending on the showingDLNA state
 				this.requestTracks();
 				return;
@@ -793,7 +820,7 @@ Module.register("MMM-SimplePlayer", {
 
 	requestTracks() {
 
-		if (!this.config.showingDLNA) {
+		if (!this.showingDLNA) {
 			if (this.config.playTracks) {
 				if (this.config.showEvents) { this.addLogEntry(`sending: SCAN_DIRECTORY`); }
 				this.sendNotificationToNodeHelper("SCAN_DIRECTORY", this.config.musicDirectory);
@@ -829,7 +856,7 @@ Module.register("MMM-SimplePlayer", {
 		if (!this.config.playlist || !this.config.playlist[this.currentTrack]) { return; }
 
 		if (this.config.showMeta) {
-			this.sendSocketNotification("GET_METADATA", this.config.playlist[this.config.playlistOrder[this.currentTrack]]);
+			this.sendNotificationToNodeHelper("GET_METADATA", this.config.playlist[this.config.playlistOrder[this.currentTrack]]);
 		}
 	},
 

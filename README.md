@@ -1,12 +1,12 @@
 # MMM-SimplePlayer
 
-This magic mirror module will enable the user to play music, control playback through a mouse or touchscreen and view details of the Track playing. 
+This magic mirror module will enable the user to play music, show Images in a slideShow, control playback through a mouse or touchscreen and view details of the Track playing. 
 
 Tracks can be played from either:
 ```
  	a local folder relative to the MagicMirror folder
  	a named playlist in a local folder, containing local tracks in folders relative to the requested musicDirectory, and/or from any streaming servers
- 	a DLNA server available on the same network as the magicMirror
+ 	a DLNA server available on the same network as the magicMirror - Images can be shown if available only from a DLNA server. 
 ```
 
 ### Examples:
@@ -130,6 +130,14 @@ This will show the Simple format of controls (as in example 1 above) which will 
 	}
 },
 ```
+## Usage Notes
+
+This is a single instance module, and so only one instance should be included in the config.js file. If more than one is added there will be unexpected behaviour.
+
+DLNA servers are not always visible immediately the module starts. The module will scan for DLNA servers for a short period then stop.
+
+The response from DLNA servers should meet standards but in testing in some situations a message is received that is not expected. The module will try to handle these situations but if the DLNA server is not behaving as expected then some features may not work.
+
 ## Configuration Options
 
 | Option                  | Details

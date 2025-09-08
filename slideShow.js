@@ -33,13 +33,14 @@ class ImageSlideshow {
 	}
 
 	play() {
+
+		this.state = 'playing';
+		this.lastStartTime = Date.now();
+		clearTimeout(this.timer);
+
 		if (this.state === 'paused') {
-			this.state = 'playing';
-			this.lastStartTime = Date.now();
 			this.timer = setTimeout(() => this.next(), this.remainingTime);
 		} else {
-			this.state = 'playing';
-			this.lastStartTime = Date.now();
 			this.showImage(this.currentIndex, true);
 			this.timer = setTimeout(() => this.next(), this.slideDuration);
 		}
@@ -55,12 +56,12 @@ class ImageSlideshow {
 
 	stop() {
 		clearTimeout(this.timer);
-		this.displayElement.innerHTML = '';
 		this.state = 'stopped';
 		this.remainingTime = null;
 	}
 
 	next() {
+		clearTimeout(this.timer);
 		this.currentIndex = (this.currentIndex + 1) % this.playlist.length;
 		this.showImage(this.currentIndex, true);
 		if (this.state === 'playing') {
@@ -70,6 +71,7 @@ class ImageSlideshow {
 	}
 
 	prev() {
+		clearTimeout(this.timer);
 		this.currentIndex = (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
 		this.showImage(this.currentIndex, true);
 		if (this.state === 'playing') {

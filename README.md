@@ -178,7 +178,7 @@ Methods:
 ```
   play()	Starts slideshow. Resumes from pause without fade; from stop with fade.
   pause()	Pauses slideshow, preserving time left for current image.
-  stop()	Stops slideshow and clears display.
+  stop()	Stops slideshow and clears timer. Current Image stays present permenantly.
   next()	Advances to next image with fade.
   prev()	Goes to previous image with fade.
   setDuration(ms)	Sets duration each image is shown.

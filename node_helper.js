@@ -1,5 +1,7 @@
 'use strict';
 
+//we dont need specific identifiers in all cases, for servers, they need to eb sent back to everyone !!
+
 const NodeHelper = require("node_helper");
 const fs = require("fs");
 const path = require("path");
@@ -14,7 +16,10 @@ module.exports = NodeHelper.create({
 
 	start: function ()
 	{
-		console.log("Music Player Node Helper started");
+		console.log("SimplePlayer Node Helper started");
+
+		this.requestRegistry = {};
+
 		this.setInitialValues();
 	},
 
@@ -31,10 +36,18 @@ module.exports = NodeHelper.create({
 		this.currentServerIdx = null;
 
 		this.DLNAShowing = false;
+
+	},
+
+	generateUniqueId() {
+
+		return 'req_' + Math.random().toString(36).substr(2, 9);
+
 	},
 
 	socketNotificationReceived(notification, fullpayload)
 	{
+
 		var identifier = fullpayload.identifier;
 		var payload = fullpayload.payload;
 
@@ -463,6 +476,13 @@ module.exports = NodeHelper.create({
 
 		var DLNAList = [];
 
+		console.log("Starting server discovery...",identifier);
+
+		const requestId = this.generateUniqueId(); // Unique per request
+		this.requestRegistry[requestId] = identifier;
+
+		console.log("Request ID:", requestId, "Identifier:", identifier, "  ", JSON.stringify(this.requestRegistry) );
+
 		findServers(identifier,(err, result, identifier) => {
 			
 			if (err) console.error(err);
@@ -484,7 +504,14 @@ module.exports = NodeHelper.create({
 					DLNAList.push(newItem);
 				}
 
-				this.sendSocketNotification(identifier+">"+ "NEW_DLNA_ITEMS", DLNAList);
+				//send back to all modules that requested the servers
+
+				for (const [key, identifier] of Object.entries(this.requestRegistry)) {
+					console.log("Ending server discovery...", key," ",identifier);
+					delete this.requestRegistry[key]; // Clean up
+					this.sendSocketNotification(identifier + ">" + "NEW_DLNA_ITEMS", DLNAList);
+				};
+
 			}
 		});
 

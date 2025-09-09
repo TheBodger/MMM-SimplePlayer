@@ -92,7 +92,7 @@ class FolderTree {
 }
 
 var globalCallback = null;
-var globalidentifier = null;
+var globalIdentifier = null;
 
 var searchNodes = [];
 
@@ -171,16 +171,9 @@ function getNodeChildren(identifier, server, node, recurse, resetSearchNodes, on
 }
 
 function findServers(identifier,callback) {
-  globalCallback = callback;
-  globalidentifier = identifier;
+    globalCallback = callback;
+  console.log('DLNA Server Search:', identifier);
     client.browse('urn:schemas-upnp-org:service:ContentDirectory:1');
-}
-
-function stopFindingServers() {
-    if (client) {
-        client.stop();
-        console.log('Stopped finding servers.');
-    }
 }
 
 client.on('response', (response) => {
@@ -188,12 +181,18 @@ client.on('response', (response) => {
     var statusCode = response.statusCode;
     var referrer = response.referrer;
     console.log('DLNA Server Found:', headers.LOCATION);
-  getServerDetails(headers.LOCATION, globalCallback, globalidentifier);
+    getServerDetails(headers.LOCATION, globalCallback);
 });
 
-function getServerDetails(locationUrl, callback, identifier) {
+function stopFindingServers() {
+    if (client) {
+        client.stop();
+        console.log('Stopped finding servers.');
+    }
+}
+function getServerDetails(locationUrl, callback) {
     const hostDetails = new URL(locationUrl);
-    fetchXML(identifier, locationUrl, (err, xml, identifier) => {
+    fetchXML(locationUrl, (err, xml) => {
         if (err) return callback(err);
 
         const parser = new DOMParser();
@@ -225,10 +224,10 @@ function getServerDetails(locationUrl, callback, identifier) {
             services
         };
 
-      callback(null, { details, hostDetails }, identifier);
+      callback(null, { details, hostDetails });
     });
 }
-function fetchXML(identifier,locationUrl, callback) {
+function fetchXML(locationUrl, callback) {
     const urlParts = parse(locationUrl);
     const protocol = urlParts.protocol === 'https:' ? https : http;
 
@@ -239,7 +238,7 @@ function fetchXML(identifier,locationUrl, callback) {
         res.on('data', chunk => { data += decoder.write(chunk); });
         res.on('end', () => {
             data += decoder.end();
-            callback(null, data, identifier);
+            callback(null, data);
         });
     });
 

@@ -243,7 +243,7 @@ Module.register("MMM-SimplePlayer", {
 
 	addLogEntry(msg) {
 		if (!this.config.showEvents) { return };
-		const eventLog = document.getElementById("eventLogbody");
+		const eventLog = document.getElementById("eventLogbody"+this.identifier);
 		if (!eventLog) {
 			if (this.config.debug) console.error("Event log element not found.");
 			return;
@@ -330,7 +330,7 @@ Module.register("MMM-SimplePlayer", {
 		if (this.config.showEvents || this.config.showAlbumArt) {
 			const eventLog = document.createElement("div");
 			eventLog.className = "small muted-background";
-			eventLog.id = "eventLog";
+			eventLog.id = "eventLog" + this.identifier;
 			eventLog.style.maxHeight = "6em";
 			eventLog.style.height = "5em";
 			eventLog.style.overflowY = "auto";
@@ -397,7 +397,7 @@ Module.register("MMM-SimplePlayer", {
 
 		const controls = document.createElement("div");
 		controls.className = "controls " + this.config.controlsSize;
-		controls.id = "controls";
+		controls.id = "controls" + this.identifier;
 
 		if (!this.config.showMeta) { controls.className += this.audio.playing ? " pulsing-border" : " still-border"; }
 
@@ -416,7 +416,7 @@ Module.register("MMM-SimplePlayer", {
 			}
 
 			const button = document.createElement("button");
-			button.id = action.toLowerCase() + "Button";
+			button.id = action.toLowerCase() + "Button" + this.identifier;
 			button.className = "fa-button  tooltip-container";
 			button.addEventListener("click", () => this.handleAction(action));
 			this.setupButton(action, icon, unDimmed, button); //pass button as it may not be available yet
@@ -460,7 +460,7 @@ Module.register("MMM-SimplePlayer", {
 
 			const DLNAControls = document.createElement("div");
 			DLNAControls.className = "controls " + this.config.controlsSize;;
-			DLNAControls.id = "DLNAControls";
+			DLNAControls.id = "DLNAControls" + this.identifier;
 
 			Object.entries(this.DLNAIconMap).forEach(([action, [icon, unDimmed]]) => {
 				const button = document.createElement("button");
@@ -509,7 +509,7 @@ Module.register("MMM-SimplePlayer", {
 	{
 		//get the Play/Pause button element so we can change its inner html to the correct icon
 
-		const playPauseButton = document.getElementById("playButton");
+		const playPauseButton = document.getElementById("playButton" + this.identifier);
 
 		//need the tooltip added here!!
 
@@ -535,7 +535,7 @@ Module.register("MMM-SimplePlayer", {
 		}
 		else
 		{
-			var buttonT = document.getElementById(action.toLowerCase() + "Button");
+			var buttonT = document.getElementById(action.toLowerCase() + "Button" + this.identifier);
 		}
 
 		buttonT.innerHTML = `<i id="${action}icon" class="fas ${icon} ${unDimmed ? "" : "dimmedButton"}" aria-hidden="true"></i>`;
@@ -631,7 +631,7 @@ Module.register("MMM-SimplePlayer", {
 
 		if (action == "volumechange") { bAction = "Volume"; } //volumechange is a special case as it is triggered by the audio element, not a button)
 
-		const Icon = document.getElementById(bAction+"icon");
+		const Icon = document.getElementById(bAction+"icon"+this.identifier);
 
 		switch (action) {
 
@@ -792,7 +792,7 @@ Module.register("MMM-SimplePlayer", {
 	showAlbumArt()
 	{
 		if (!this.config.art || !this.config.art[this.config.playlistOrder[this.currentTrack]]) { return; } //check we have actually got some art to load
-		var sp = document.getElementById("eventLog");
+		var sp = document.getElementById("eventLog" + this.identifier);
 		sp.setAttribute("art", this.config.art[this.config.playlistOrder[this.currentTrack]]);
 		sp.style.backgroundImage = `url("${this.config.art[this.config.playlistOrder[this.currentTrack]]}")`;
 		sp.style.backgroundSize = 'contain';
@@ -802,7 +802,7 @@ Module.register("MMM-SimplePlayer", {
 	
 	showDLNAAlbumArt(url)
 	{
-		var sp = document.getElementById("eventLog");
+		var sp = document.getElementById("eventLog" + this.identifier);
 		sp.setAttribute("art", url);
 		sp.style.backgroundImage = `url("${url}")`;
 		sp.style.backgroundSize = 'contain';
@@ -842,7 +842,7 @@ Module.register("MMM-SimplePlayer", {
 
 	setBorder() {
 
-		const controls = document.getElementById("controls");
+		const controls = document.getElementById("controls" + this.identifier);
 
 		//replace the border class old,with new
 

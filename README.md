@@ -38,6 +38,8 @@ If the DLNA server includes tracks in other formats, it may have the ability to 
 
 If tracks are in different formats, such as WMA, then use a conversion tool to create MP3 versions. VLC is a great free player that will also convert tracks from various formats to MP3.
 
+The module will check if the file ends with and extension that is supported (i.e. .mp3, .ogg, .wav). A secondary check is made to see if the URL in the playlist ends with - and then the tpye (i.e. -mp3). An example of a playlist with internet radio entries is included in the music folder called SomaFM-GrooveSalad.m3u
+
 ### Security and track location
 
 Modern browsers incorporate various security features that wont load tracks from "unSafe" locations. Different browsers (including Electron) have different interpretations of what is "unSafe" and so tracks in a location playable from one device/interface may be rejected in another combination. 

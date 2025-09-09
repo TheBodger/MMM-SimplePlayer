@@ -125,12 +125,14 @@ Module.register("MMM-SimplePlayer", {
 	},
 
 	isSupportedAudio(url) {
-		if (!url)
-		{
-			var x = 1;
+
+		//add ability to check a radio url where the type is in the url (-mp3)
+
+		var extMatch = url.match(/\.([a-zA-Z0-9]+)(?:\?|#|$)/); //check .mp3
+		if (!extMatch) {
+			var extMatch = url.match(/\-([a-zA-Z0-9]+)(?:\?|#|$)/); //check -mp3
+			if (!extMatch) { return false; }
 		}
-		const extMatch = url.match(/\.([a-zA-Z0-9]+)(?:\?|#|$)/);
-		if (!extMatch) return false;
 
 		const ext = extMatch[1].toUpperCase();
 		return this.config.supportedAudioExt.includes(ext);
@@ -140,26 +142,30 @@ Module.register("MMM-SimplePlayer", {
 	{
 		//html audio player only currently supports MP3 WAV OGG NOT native windows WMA
 
+		if (this.config.showEvents) { this.addLogEntry(`Audio: ${src}`); }
+
 		this.trackInfoMsg = "";
 		//console.log("src:", src);
 
 		if (this.isSupportedAudio(src))
 		{
+
 			this.audio.src = src;
+
+			this.getTrackInfo();
+
+			if (this.config.showAlbumArt) {
+				//console.log("showing art");
+				this.showAlbumArt();
+			}
+
 		}
 		else
 		{
 			this.trackInfoMsg = " - Unsupported audio";
-			this.audio.src = null;
+			this.audio.src = "";
 		}
 
-		this.getTrackInfo();
-
-		if (this.config.showAlbumArt)
-		{
-			//console.log("showing art");
-			this.showAlbumArt();
-		}
 	},
 
 	socketNotificationReceived(fullnotification, payload)
@@ -343,7 +349,7 @@ Module.register("MMM-SimplePlayer", {
 				eventLog.style.border = "1px solid #ccc";
 
 				const eventLogBody = document.createElement("div");
-				eventLogBody.id = "eventLogbody";
+				eventLogBody.id = "eventLogbody"+this.identifier;
 
 				eventLog.appendChild(eventLogBody);
 			}
@@ -538,7 +544,7 @@ Module.register("MMM-SimplePlayer", {
 			var buttonT = document.getElementById(action.toLowerCase() + "Button" + this.identifier);
 		}
 
-		buttonT.innerHTML = `<i id="${action}icon" class="fas ${icon} ${unDimmed ? "" : "dimmedButton"}" aria-hidden="true"></i>`;
+		buttonT.innerHTML = `<i id="${action}icon${this.identifier}" class="fas ${icon} ${unDimmed ? "" : "dimmedButton"}" aria-hidden="true"></i>`;
 
 		this.addTooltip(buttonT, action);
 

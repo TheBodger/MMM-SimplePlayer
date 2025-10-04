@@ -247,6 +247,13 @@ Module.register("MMM-SimplePlayer", {
 		]
 	},
 
+	addAudioEvent(msg)
+	{
+		const audioError = this.audio.error ? ` ( Error ${this.audio.error.code}: ${this.audio.error.message})` : "";
+
+		this.addLogEntry(`${msg}${audioError}`);
+	},
+
 	addLogEntry(msg) {
 		if (!this.config.showEvents) { return };
 		const eventLog = document.getElementById("eventLogbody"+this.identifier);
@@ -359,6 +366,7 @@ Module.register("MMM-SimplePlayer", {
 
 		this.audio = document.createElement("audio");
 		this.audio.id = "audioPlayer";
+		this.audio.crossOrigin = "anonymous";
 
 		const audioEvents = [
 			{ action: 'abort', required: false }, { action: 'canplay', required: false },
@@ -385,7 +393,7 @@ Module.register("MMM-SimplePlayer", {
 				this.audio.addEventListener(eventType.action, (e) => {
 					if (this.config.showEvents && !(preEventType == eventType.action)) {
 						const timestamp = new Date().toLocaleTimeString();
-						this.addLogEntry(`${timestamp} — ${eventType.action}`);
+						this.addAudioEvent(`${timestamp} — ${eventType.action}`);
 					}
 					preEventType = eventType.action;
 					if (eventType.required) { this.handleAction(eventType.action); } //only handle actions that are required

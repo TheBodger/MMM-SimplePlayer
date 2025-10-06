@@ -91,6 +91,8 @@ Note that in this example these tracks are in the folder indicated in the musicD
 
 This module requires multiple modules, either included in the install or when npm install is run. Package.json contains details. Some Forks of modules are also included that have been enhanced specifially for SimplePlayer.
 
+If you want to use the visualiser then also install MMM-ButterMeNoParsnips
+
 ### Installation
 To install the module, use your terminal to:
 1. Navigate to your MagicMirror's modules folder. If you are using the default installation directory, use the command:<br />`cd ~/MagicMirror/modules`

@@ -38,6 +38,13 @@ Module.register("MMM-SimplePlayer", {
 		defaultplayercontrols: ['Back', 'Play', 'Stop', 'Next', 'Volume', 'Shuffle', 'Repeat', 'MiniPlayer', 'DLNA'],
 
 		supportedAudioExt: ['MP3', 'WAV', 'OGG'],
+
+		showVisualiser:false,
+		useProxy: false,
+
+		DLNAs: [], //add servers when found here
+		proxyBase: "http://localhost:8080/proxy", //the URL of the proxy endpoint
+
 		debug: false,
 	},
 
@@ -74,7 +81,7 @@ Module.register("MMM-SimplePlayer", {
 
 		this.slideShow = null;
 
-		this.showingDLNA = false; //used to toggle the DLNA button
+		this.showingDLNA = this.config.showDLNA; //used to toggle the DLNA button
 		this.showingMini = this.config.showMini; //used to toggle the Miniplayer button
 
 		this.startAudio();
@@ -118,6 +125,13 @@ Module.register("MMM-SimplePlayer", {
 			ScrollRight: ["fa-arrow-right", true], //only if entries in the tree to the right; if no entries, will attempt to get new folders from the DLNA client using the ID of the displayed node
 		}
 
+		this.addDLNAServers = false; //used to indicate if we need to add DLNA servers when found
+
+		if (this.config.useProxy && this.config.DLNAs.length == 0)
+		{
+			this.addDLNAServers = true;
+		}
+
 	},
 
 	sendNotificationToNodeHelper: function (notification, payload) { //special to send the discrete module id each time
@@ -149,8 +163,12 @@ Module.register("MMM-SimplePlayer", {
 
 		if (this.isSupportedAudio(src))
 		{
-
-			this.audio.src = src;
+			if (this.config.useProxy) {
+				this.audio.src = Utilities.getProxyAudioSrc(src, this.config);
+			}
+			else {
+				this.audio.src = src;
+			}
 
 			this.getTrackInfo();
 
@@ -220,31 +238,62 @@ Module.register("MMM-SimplePlayer", {
 
 	},
 
-	radomisePlaylist: function (shuffle) {
+	radomisePlaylist: function (shuffle)
+	{
 		//setup the play order as 0 - n initially
 
-		for (let i = 0; i < this.config.playlist.length; i++) {
+		for (let i = 0; i < this.config.playlist.length; i++)
+		{
 			this.config.playlistOrder[i] = i;
 		}
 
 		//now randomise if needed
 		//use a seedable random function to shuffle the playlist
 
-		if (shuffle) {
+		if (shuffle)
+		{
 			this.config.playlistOrder = this.seededShuffleRange(0, this.config.playlist.length - 1)
 		}
 
 	},
 
-	getStyles: function () {
-		return ["MMM-SimplePlayer.css", 'font-awesome.css'];
+	getStyles: function ()
+	{
+
+		if (this.config.showVisualiser)
+		{
+			return ["MMM-SimplePlayer.css", 'font-awesome.css',"modules/MMM-ButterMeNoParsnips/butterMeNoParsnips.css"]
+}
+		else
+		{
+			return ["MMM-SimplePlayer.css", 'font-awesome.css'];
+		}
+
 	},
 
-	getScripts: function () {
-		return [
-			this.file('touchToolTipHandler.js'), // this file will be loaded straight from the module folder.
-			this.file('slideShow.js'), // this file will be loaded straight from the module folder.
-		]
+	getScripts: function ()
+	{
+		// if using butterme, then the butterme script might be loaded by audioproxy.
+
+		if (this.config.showVisualiser)// && Utilities == null)
+		{
+
+			return [
+				this.file('touchToolTipHandler.js'), // this file will be loaded straight from the module folder.
+				this.file('slideShow.js'), // this file will be loaded straight from the module folder.
+				'modules/MMM-butterMeNoParsnips/helpers.js',
+			]
+
+		}
+		else
+		{
+
+			return [
+				this.file('touchToolTipHandler.js'), // this file will be loaded straight from the module folder.
+				this.file('slideShow.js'), // this file will be loaded straight from the module folder.
+			]
+		}
+
 	},
 
 	addAudioEvent(msg)
@@ -254,10 +303,12 @@ Module.register("MMM-SimplePlayer", {
 		this.addLogEntry(`${msg}${audioError}`);
 	},
 
-	addLogEntry(msg) {
+	addLogEntry(msg)
+	{
 		if (!this.config.showEvents) { return };
 		const eventLog = document.getElementById("eventLogbody"+this.identifier);
-		if (!eventLog) {
+		if (!eventLog)
+		{
 			if (this.config.debug) console.error("Event log element not found.");
 			return;
 		}
@@ -267,10 +318,12 @@ Module.register("MMM-SimplePlayer", {
 		eventLog.prepend(event);
 	},
 
-	loadDLNAItems() {
+	loadDLNAItems()
+	{
 		this.DLNAItems = [];
 
-		this.returnedDLNAItems.forEach(DLNAItem => {
+		this.returnedDLNAItems.forEach(DLNAItem =>
+		{
 
 			if (DLNAItem.type == "server") {
 				this.DLNAServersLoaded = true;
@@ -279,11 +332,24 @@ Module.register("MMM-SimplePlayer", {
 
 			this.DLNAItems.push({ id: DLNAItem.id, type: DLNAItem.type, item: DLNAItem.name, content: DLNAItem.content });
 
+			if (this.config.useProxy)
+			{
+				if (DLNAItem.address != null && this.addDLNAServers) //only add a valid address if the original config was empty
+				{
+					this.addDLNAServer(DLNAItem.address)
+				}
+			}
+
 		});
 
 		if (this.DLNAIdxs[this.DLNACurrentIdx] > this.DLNAItems.length - 1) { this.DLNAIdxs[this.DLNACurrentIdx] = 0; };
 
 		//console.log("Showing DLNAitems 1", this.DLNAItems.length, " ", JSON.stringify(this.DLNAItems))
+	},
+
+	addDLNAServer(server)
+	{
+		this.config.DLNAs.push(server);
 	},
 
 	showDLNAItems() {
@@ -340,7 +406,7 @@ Module.register("MMM-SimplePlayer", {
 
 		}
 
-		if (this.config.showEvents || this.config.showAlbumArt) {
+		if (this.config.showEvents || this.config.showAlbumArt || this.config.showVisualiser) {
 			const eventLog = document.createElement("div");
 			eventLog.className = "small muted-background";
 			eventLog.id = "eventLog" + this.identifier;
@@ -359,6 +425,18 @@ Module.register("MMM-SimplePlayer", {
 				eventLogBody.id = "eventLogbody"+this.identifier;
 
 				eventLog.appendChild(eventLogBody);
+			}
+
+			if (this.config.showVisualiser)
+			{
+				butterMeDiv = document.createElement("div");
+				butterMeDiv.id = "butterme";
+				butterMeDiv.className = "butterme";
+
+				Helpers.addBMConfig("audioPlayer", true, "butterme"); //set the config for butterme only
+				Helpers.addBMScript(); //writes the butterme to the page as it has to be type module!
+
+				eventLog.appendChild(butterMeDiv);
 			}
 
 			wrapper.appendChild(eventLog);

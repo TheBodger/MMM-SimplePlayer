@@ -497,10 +497,11 @@ module.exports = NodeHelper.create({
 				}
 
 				if (!DLNAList.some(server => server.name === newServer.server)) {
-					const newItem = { id: null, type: null, name: null }; //format of item to store in the list of items ready to return to the calling module
+					const newItem = { id: null, type: null, name: null,address:null }; //format of item to store in the list of items ready to return to the calling module
 					newItem.id = newServer.id;
 					newItem.type = "server";
 					newItem.name = newServer.server;
+					newItem.address = `${newServer.properties.hostDetails.protocol}//${newServer.properties.hostDetails.host}`;//newServer.properties.hostDetails.protocol;
 					DLNAList.push(newItem);
 				}
 

@@ -145,16 +145,17 @@ This will show the Simple format of controls (as in example 1 above) which will 
 	module: "MMM-SimplePlayer",
 	position: "top_center",
 	config: {
-		autoplay: true, 
-		playTracks: false, //Means either play from the directory or not, must be false to use the playlist
-		usePlaylist: false,
-		showEvents: false,
-		showMeta: true,
-		startMuted: false,
-		showDLNA:true,
-		showVisualiser:true,
-		useProxy:true,
-	},
+		  autoplay: true, 
+		  playTracks: false, //Means either play from the directory or not, must be false to use the playlist
+		  usePlaylist: false,
+		  showEvents: false,
+		  showMeta: true,
+		  startMuted: false,
+		  showDLNA:true,
+		  showVisualiser:true,
+		  useProxy:true,
+	  },
+  },
 	{
 		module: "MMM-AudioProxy",
 	},
@@ -201,10 +202,13 @@ All sizing and positioning of elements within the module is done using CSS. Spec
 
 | `showVisualiser*`                | *Optional* - If true the butterchurn visualiser will be displayed and the MMM-ButterMeNoParsnips module must be installed in this instance of MM.<br><br> **Possible values:** true/false.<br> **Default value:** false
 | `useProxy*`                | *Optional* - If true, the MMM-AudioProxy helpers will be used to convert the DLNA src URL to match the proxyBaseURL. A proxy server such as MMM-Audioproxy must be loaded and accessible to this instance of MM.<br><br> **Possible values:** true/false.<br> **Default value:** false
+| `DLNAs**`                | *Required* - a list of known DLNA servers on the same network as the MM in the format ["server1 ip:port","server2 ip:port",etc]. If empty, the list id populated as DLNA servers are discovered<br><br> **Possible values:** Any list of addresses or empty list.<br> **Default value:** "[]"
+| `proxybase*`                | *Optional* - The base address of the proxy server target<br><br> **Possible values:** A valid internet address of protocol://host:port/paths.<br> **Default value:** "http://localhost:8080/proxy"
 
 | `debug`                | *Optional* - if true, shows some additional messages in the consoles. <br><br> **Possible values:** true/false.<br> **Default value:** false		
 
 * for visualiser and proxy (recomended) go to their respective repositories in Github to install and see options available.
+** Automatic adding of DLNA server addresses is currently under construction. This is a required config value at the moment.
 * See the example config above for minimum simpleplayer, visualiser and proxy.
 
 ##SlideShow API

@@ -150,7 +150,7 @@ All sizing and positioning of elements within the module is done using CSS. Spec
 
 | Option                  | Details
 |------------------------ |--------------
-| `autoplay`                | *Optional* - if true, whenever a new track is requested (Next, Previous, First load of MM, DLNA playlist changes if enables and being used as music source) it will automatically start (see security and track location above)<br><br> **Possible values:** true/false.<br> **Default value:** true
+| `autoplay`                | *Optional* - if true, whenever a new track is requested (Next, Previous, First load of MM, DLNA playlist changes if enabled and being used as music source) it will automatically start (see security and track location above)<br><br> **Possible values:** true/false.<br> **Default value:** true
 | `playTracks`                | *Optional* - if true, the musicDirectory is searched for valid tracks, and available to play. Must be false to use the playlist option<br><br> **Possible values:** true/false.<br> **Default value:** true
 | `musicDirectory`                | *Optional* - the musicDirectory contains a relative folder path to the MagicMirror main location which is searched for tracks, playlists, and any local tracks referenced in a playlist<br><br> **Possible values:** any valid relative folder path.<br> **Default value:** "modules/MMM-SimplePlayer/music"
 | `usePlaylist`                | *Optional* - if true, the musicDirectory is searched for the named playlist and the tracks within it are made to play. <br><br> **Possible values:** true/false.<br> **Default value:** false
@@ -173,6 +173,10 @@ All sizing and positioning of elements within the module is done using CSS. Spec
 | `slideShowFadeDuration`                | *Optional* - The time in milliseconds that slides transition from the current to the next one.<br><br> **Possible values:** An integer of milliseconds<br> **Default value:** 2000 (2 seconds)
 | `showSlideShowControls`                | *Optional* - if true, shows controls over the slideshow when the mouse is moved over it. <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `slideShowSize`                | *Optional* - The size of the images in the slideshow.<br><br> **Possible values:** small,medium or large.<br> **Default value:** medium
+
+| `showVisualiser`                | *Optional* - If true the butterchurn visualiser will be displayed and the MMM-ButterMeNoParsnips module must be installed<br><br> **Possible values:** true/false.<br> **Default value:** false
+| `useProxy`                | *Optional* - If true, the MMM-AudioProxy helpers will be used to convert the DLNA src URL to match the proxyBaseURL<br><br> **Possible values:** true/false.<br> **Default value:** false
+| `proxyBaseURL`                | *Optional* - A specific URL including ip,port and any  to replace the DLNA <br><br> **Possible values:** small,medium or large.<br> **Default value:** medium
 | `debug`                | *Optional* - if true, shows some additional messages in the consoles. <br><br> **Possible values:** true/false.<br> **Default value:** false		
 
 ##SlideShow API

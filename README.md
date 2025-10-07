@@ -9,6 +9,8 @@ Tracks can be played from either:
  	a DLNA server available on the same network as the magicMirror - Images can be shown if available only from a DLNA server. 
 ```
 
+The butterchurn visualiser can be used to display visualisations of the audio playing regardless of source. Due to restrictions in your setup, MMM-AudioProxy or another proxy server may be required to enable this feature with sources from certain sites (DLNA servers seem to be a problem without  a proxy).
+
 ### Examples:
 
 Screenshots of the Simple layout when music is playing<br>(Note, the MiniPlayer toggle is not shown except in the actual miniPlayer example. See config details)
@@ -174,10 +176,13 @@ All sizing and positioning of elements within the module is done using CSS. Spec
 | `showSlideShowControls`                | *Optional* - if true, shows controls over the slideshow when the mouse is moved over it. <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `slideShowSize`                | *Optional* - The size of the images in the slideshow.<br><br> **Possible values:** small,medium or large.<br> **Default value:** medium
 
-| `showVisualiser`                | *Optional* - If true the butterchurn visualiser will be displayed and the MMM-ButterMeNoParsnips module must be installed<br><br> **Possible values:** true/false.<br> **Default value:** false
-| `useProxy`                | *Optional* - If true, the MMM-AudioProxy helpers will be used to convert the DLNA src URL to match the proxyBaseURL<br><br> **Possible values:** true/false.<br> **Default value:** false
-| `proxyBaseURL`                | *Optional* - A specific URL including ip,port and any  to replace the DLNA <br><br> **Possible values:** small,medium or large.<br> **Default value:** medium
+| `showVisualiser*`                | *Optional* - If true the butterchurn visualiser will be displayed and the MMM-ButterMeNoParsnips module must be installed in this instance of MM.<br><br> **Possible values:** true/false.<br> **Default value:** false
+| `useProxy*`                | *Optional* - If true, the MMM-AudioProxy helpers will be used to convert the DLNA src URL to match the proxyBaseURL. A proxy server such as MMM-Audioproxy must be loaded and accessible to this instance of MM.<br><br> **Possible values:** true/false.<br> **Default value:** false
+
 | `debug`                | *Optional* - if true, shows some additional messages in the consoles. <br><br> **Possible values:** true/false.<br> **Default value:** false		
+
+* for visualiser and proxy (recomended) go to their respective repositories in Github to install and see options available.
+* The MMM-AudioProxy option 
 
 ##SlideShow API
 

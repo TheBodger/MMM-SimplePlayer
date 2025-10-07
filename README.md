@@ -120,7 +120,7 @@ To use this module, add the following minimum configuration block to the modules
 ```
 This will show the Simple format of controls (as in example 1 above) which will play any valid tracks from the folder MMM-SimplePlayer/music
 
-### Example Config
+### Example Config (without proxy or visualisations)
 
 ```js
 {
@@ -138,6 +138,29 @@ This will show the Simple format of controls (as in example 1 above) which will 
 	}
 },
 ```
+### Example Config (with proxy and visualisations and DLNA enabled*)
+
+```js
+{
+	module: "MMM-SimplePlayer",
+	position: "top_center",
+	config: {
+		autoplay: true, 
+		playTracks: false, //Means either play from the directory or not, must be false to use the playlist
+		usePlaylist: false,
+		showEvents: false,
+		showMeta: true,
+		startMuted: false,
+		showDLNA:true,
+		showVisualiser:true,
+		useProxy:true,
+	},
+	{
+		module: "MMM-AudioProxy",
+	},
+},
+```
+
 ## Usage Notes
 
 This is a single instance module, and so only one instance should be included in the config.js file. If more than one is added there will be unexpected behaviour.
@@ -182,7 +205,7 @@ All sizing and positioning of elements within the module is done using CSS. Spec
 | `debug`                | *Optional* - if true, shows some additional messages in the consoles. <br><br> **Possible values:** true/false.<br> **Default value:** false		
 
 * for visualiser and proxy (recomended) go to their respective repositories in Github to install and see options available.
-* The MMM-AudioProxy option 
+* See the example config above for minimum simpleplayer, visualiser and proxy.
 
 ##SlideShow API
 

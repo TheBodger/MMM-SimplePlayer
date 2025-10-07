@@ -50,6 +50,8 @@ If the tracks are on the MagicMirror server, then store them in a folder that is
 
 If using a playlist, then the tracks within the playlist should either refer to the same or similar folder within the MagicMirror folder structure and/or be streamed from a web server. DLNA servers make a good source as they can be anywhere on your network. 
 
+For specific details about restrictions with accessing data from DLNA servers in the Visualiser, butterchurn, see the [MMM-Buttermenoparsnips](https://github.com/TheBodger/MMM-ButterMeNoParsnips) and [MMM-AudioProxy modules](https://github.com/TheBodger/MMM-AudioProxy).
+
 ### Playlist formats
 
 Playlists in the standard m3u or m3u8 format are supported. For local tracks make sure that the track is referenced in a relative way (i.e. it shouldn’t start with \ or /) and that is is within the folder or a subfolder of musicDirectory config entry, see examples below.

@@ -45,6 +45,8 @@ Module.register("MMM-SimplePlayer", {
 		DLNAs: [], //add servers when found here
 		proxyBase: "http://localhost:8080/proxy", //the URL of the proxy endpoint
 
+		autoHideControls: false,
+
 		debug: false,
 	},
 
@@ -260,7 +262,7 @@ Module.register("MMM-SimplePlayer", {
 	getStyles: function ()
 	{
 
-		if (this.config.showVisualiser)
+		if (this.config.showVisualiser || this.config.autoHideControls)
 		{
 			return ["MMM-SimplePlayer.css", 'font-awesome.css',"modules/MMM-ButterMeNoParsnips/butterMeNoParsnips.css"]
 }
@@ -382,6 +384,18 @@ Module.register("MMM-SimplePlayer", {
 		wrapper.className = "simple-player";
 		wrapper.id = "simple-player";
 
+		if (this.config.showVisualiser) {
+
+			butterMeDiv = document.createElement("div");
+			butterMeDiv.id = "butterme";
+			butterMeDiv.className = "butterme";
+
+			Helpers.addBMConfig("audioPlayer", true, "butterme"); //set the config for butterme only
+			Helpers.addBMScript(); //writes the butterme to the page as it has to be type module!
+
+			wrapper.appendChild(butterMeDiv);
+		}
+
 		if (this.config.showAlbumArt) { wrapper.setAttribute("art", ""); }
 
 		if (this.config.showSlideShow)
@@ -406,7 +420,7 @@ Module.register("MMM-SimplePlayer", {
 
 		}
 
-		if (this.config.showEvents || this.config.showAlbumArt || this.config.showVisualiser) {
+		if (this.config.showEvents || this.config.showAlbumArt) {
 			const eventLog = document.createElement("div");
 			eventLog.className = "small muted-background";
 			eventLog.id = "eventLog" + this.identifier;
@@ -426,19 +440,6 @@ Module.register("MMM-SimplePlayer", {
 
 				eventLog.appendChild(eventLogBody);
 			}
-
-			if (this.config.showVisualiser)
-			{
-				butterMeDiv = document.createElement("div");
-				butterMeDiv.id = "butterme";
-				butterMeDiv.className = "butterme";
-
-				Helpers.addBMConfig("audioPlayer", true, "butterme"); //set the config for butterme only
-				Helpers.addBMScript(); //writes the butterme to the page as it has to be type module!
-
-				eventLog.appendChild(butterMeDiv);
-			}
-
 			wrapper.appendChild(eventLog);
 		}
 
@@ -489,6 +490,9 @@ Module.register("MMM-SimplePlayer", {
 
 		const controls = document.createElement("div");
 		controls.className = "controls " + this.config.controlsSize;
+
+		if (this.config.autoHideControls) { controls.classList.add("SP-button-overlay"); }
+
 		controls.id = "controls" + this.identifier;
 
 		if (!this.config.showMeta) { controls.className += this.audio.playing ? " pulsing-border" : " still-border"; }
@@ -511,6 +515,7 @@ Module.register("MMM-SimplePlayer", {
 			button.id = action.toLowerCase() + "Button" + this.identifier;
 			button.className = "fa-button  tooltip-container";
 			button.addEventListener("click", () => this.handleAction(action));
+
 			this.setupButton(action, icon, unDimmed, button); //pass button as it may not be available yet
 			button.addEventListener('touchstart', handleTouchStart);
 			button.addEventListener('touchend', handleTouchEnd);
@@ -553,6 +558,7 @@ Module.register("MMM-SimplePlayer", {
 			const DLNAControls = document.createElement("div");
 			DLNAControls.className = "controls " + this.config.controlsSize;;
 			DLNAControls.id = "DLNAControls" + this.identifier;
+			if (this.config.autoHideControls) { DLNAControls.classList.add("SP-button-overlay"); }
 
 			Object.entries(this.DLNAIconMap).forEach(([action, [icon, unDimmed]]) => {
 				const button = document.createElement("button");
@@ -568,6 +574,7 @@ Module.register("MMM-SimplePlayer", {
 
 			controls.appendChild(DLNAControls);
 		}
+
 
 		return wrapper;
 

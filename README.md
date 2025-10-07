@@ -95,7 +95,7 @@ Note that in this example these tracks are in the folder indicated in the musicD
 
 This module requires multiple modules, either included in the install or when npm install is run. Package.json contains details. Some Forks of modules are also included that have been enhanced specifially for SimplePlayer.
 
-If you want to use the visualiser then also install MMM-ButterMeNoParsnips
+If you want to use the visualiser then also install MMM-ButterMeNoParsnips.
 
 ### Installation
 To install the module, use your terminal to:
@@ -199,12 +199,11 @@ All sizing and positioning of elements within the module is done using CSS. Spec
 | `slideShowFadeDuration`                | *Optional* - The time in milliseconds that slides transition from the current to the next one.<br><br> **Possible values:** An integer of milliseconds<br> **Default value:** 2000 (2 seconds)
 | `showSlideShowControls`                | *Optional* - if true, shows controls over the slideshow when the mouse is moved over it. <br><br> **Possible values:** true/false.<br> **Default value:** false
 | `slideShowSize`                | *Optional* - The size of the images in the slideshow.<br><br> **Possible values:** small,medium or large.<br> **Default value:** medium
-
+| `autoHideControls`                | *Optional* - If true, all controls will be hidden and re-appear when the mouse moves over them.<br><br> **Possible values:** small,medium or large.<br> **Default value:** false
 | `showVisualiser*`                | *Optional* - If true the butterchurn visualiser will be displayed and the MMM-ButterMeNoParsnips module must be installed in this instance of MM.<br><br> **Possible values:** true/false.<br> **Default value:** false
 | `useProxy*`                | *Optional* - If true, the MMM-AudioProxy helpers will be used to convert the DLNA src URL to match the proxyBaseURL. A proxy server such as MMM-Audioproxy must be loaded and accessible to this instance of MM.<br><br> **Possible values:** true/false.<br> **Default value:** false
 | `DLNAs**`                | *Required* - a list of known DLNA servers on the same network as the MM in the format ["server1 ip:port","server2 ip:port",etc]. If empty, the list id populated as DLNA servers are discovered<br><br> **Possible values:** Any list of addresses or empty list.<br> **Default value:** "[]"
 | `proxybase*`                | *Optional* - The base address of the proxy server target<br><br> **Possible values:** A valid internet address of protocol://host:port/paths.<br> **Default value:** "http://localhost:8080/proxy"
-
 | `debug`                | *Optional* - if true, shows some additional messages in the consoles. <br><br> **Possible values:** true/false.<br> **Default value:** false		
 
 * for visualiser and proxy (recomended) go to their respective repositories in Github to install and see options available.

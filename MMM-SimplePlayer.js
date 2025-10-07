@@ -261,11 +261,11 @@ Module.register("MMM-SimplePlayer", {
 
 	getStyles: function ()
 	{
-
+		//stuff and nonsense
 		if (this.config.showVisualiser || this.config.autoHideControls)
 		{
 			return ["MMM-SimplePlayer.css", 'font-awesome.css',"modules/MMM-ButterMeNoParsnips/butterMeNoParsnips.css"]
-}
+		}
 		else
 		{
 			return ["MMM-SimplePlayer.css", 'font-awesome.css'];
@@ -283,7 +283,7 @@ Module.register("MMM-SimplePlayer", {
 			return [
 				this.file('touchToolTipHandler.js'), // this file will be loaded straight from the module folder.
 				this.file('slideShow.js'), // this file will be loaded straight from the module folder.
-				'modules/MMM-butterMeNoParsnips/helpers.js',
+				'modules/MMM-ButterMeNoParsnips/helpers.js',
 			]
 
 		}

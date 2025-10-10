@@ -645,7 +645,8 @@ module.exports = NodeHelper.create({
 
 		const globalIdentifier = identifier;
 
-		const missingMetaData = { title: "Unknown Title", artist: "Unknown Artist", album: "Unknown Album", track: "Unknown Track" };
+		const missingMetaData = {
+			title: "Unknown Title", artist: "Unknown Artist", album: "Unknown Album", track: { name: "Unknown Track", no: 1 } };
 
 		if (!payload) { return; }
 
@@ -659,14 +660,20 @@ module.exports = NodeHelper.create({
 
 					// Extract the Content-Length header and convert it to a number
 					const contentLength = response.headers.get('Content-Length');
-					const size = contentLength ? parseInt(contentLength, 10) : undefined;
+					if (!contentLength) {
+						missingMetaData.title = payload;
+						const common = missingMetaData;
+					}
+					else {
+						const size = contentLength ? parseInt(contentLength, 10) : undefined;
 
-					// Parse the metadata from the web stream
-					const metadata = await parseWebStream(response.body, {
-						mimeType: response.headers.get('Content-Type'),
-						size // Important to pass the content-length
-					});
-					const common = metadata.common || missingMetaData;
+						// Parse the metadata from the web stream
+						const metadata = await parseWebStream(response.body, {
+							mimeType: response.headers.get('Content-Type'),
+							size // Important to pass the content-length
+						});
+						const common = metadata.common || missingMetaData;
+					}
 					this.sendSocketNotification(globalIdentifier +">"+ "METADATA_RESULT", { common });
 				} catch (error) {
 					console.error('Error parsing metadata:', error.message);

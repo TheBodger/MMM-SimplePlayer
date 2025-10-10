@@ -75,6 +75,8 @@ Module.register("MMM-SimplePlayer", {
 	start()
 	{
 
+		this.masterplayercontrols = ['Back', 'Play', 'Stop', 'Next', 'Volume', 'Shuffle', 'Repeat', 'MiniPlayer', 'DLNA'];
+
 		this.sendNotificationToNodeHelper("CONFIG", { config: { debug: this.config.debug } });
 
 		this.reset();
@@ -377,6 +379,43 @@ Module.register("MMM-SimplePlayer", {
 
 	},
 
+	isTouchDevice() {
+		return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+	},
+
+	addButtons(controlList,controls)
+	{
+		controlList.forEach(action => {
+
+			var [icon, unDimmed] = ["", ""]
+
+			if (action == "DLNA") {
+				[icon, unDimmed] = ["fa-server", this.showingDLNA]; //special case as we need to be dynamic with showingDLNA
+			}
+			else {
+				[icon, unDimmed] = this.iconMap[action];
+			}
+
+			const button = document.createElement("button");
+			button.id = action.toLowerCase() + "Button" + this.identifier;
+			button.className = "fa-button  tooltip-container";
+			button.addEventListener("click", () => this.handleAction(action));
+
+			this.setupButton(action, icon, unDimmed, button); //pass button as it may not be available yet
+			button.addEventListener('touchstart', handleTouchStart);
+			button.addEventListener('touchend', handleTouchEnd);
+			controls.appendChild(button);
+
+			this.addTooltip(button, action);
+
+			if (action == "Volume") //need some special handling for volume as it is not a button action
+			{
+				this.handleAction("volumechange");
+			} //force the correct volume icon to be showed
+
+		});
+	},
+
 	buildDom(controlList)
 	{
 
@@ -491,45 +530,21 @@ Module.register("MMM-SimplePlayer", {
 		const controls = document.createElement("div");
 		controls.className = "controls " + this.config.controlsSize;
 
-		if (this.config.autoHideControls) { controls.classList.add("SP-button-overlay"); }
+		if (this.config.autoHideControls) {
+			controls.classList.add("SP-button-overlay");
+			if (!this.isTouchDevice()) { controls.classList.add("SP-button-transparent"); }
+		}
 
 		controls.id = "controls" + this.identifier;
 
 		if (!this.config.showMeta) { controls.className += this.audio.playing ? " pulsing-border" : " still-border"; }
 
-		controlList.forEach(action =>
-		{
+		const controlButtons = document.createElement("div");
+		controlButtons.id = "controlButtons" + this.identifier;
 
-			var [icon, unDimmed] = ["", ""]
+		this.addButtons(controlList, controlButtons);
 
-			if (action == "DLNA")
-			{
-				[icon, unDimmed] = ["fa-server", this.showingDLNA]; //special case as we need to be dynamic with showingDLNA
-			}
-			else
-			{
-				[icon, unDimmed] = this.iconMap[action];
-			}
-
-			const button = document.createElement("button");
-			button.id = action.toLowerCase() + "Button" + this.identifier;
-			button.className = "fa-button  tooltip-container";
-			button.addEventListener("click", () => this.handleAction(action));
-
-			this.setupButton(action, icon, unDimmed, button); //pass button as it may not be available yet
-			button.addEventListener('touchstart', handleTouchStart);
-			button.addEventListener('touchend', handleTouchEnd);
-			controls.appendChild(button);
-
-			this.addTooltip(button, action);
-
-			if (action == "Volume") //need some special handling for volume as it is not a button action
-			{
-				this.handleAction("volumechange");
-			} //force the correct volume icon to be showed
-
-		});
-
+		controls.appendChild(controlButtons);
 		wrapper.appendChild(controls);
 
 		if (this.config.showMeta) {
@@ -558,7 +573,10 @@ Module.register("MMM-SimplePlayer", {
 			const DLNAControls = document.createElement("div");
 			DLNAControls.className = "controls " + this.config.controlsSize;;
 			DLNAControls.id = "DLNAControls" + this.identifier;
-			if (this.config.autoHideControls) { DLNAControls.classList.add("SP-button-overlay"); }
+			if (this.config.autoHideControls) {
+				DLNAControls.classList.add("SP-button-overlay");
+				if (!this.isTouchDevice()) { DLNAControls.classList.add("SP-button-transparent"); }
+			}
 
 			Object.entries(this.DLNAIconMap).forEach(([action, [icon, unDimmed]]) => {
 				const button = document.createElement("button");
@@ -580,19 +598,44 @@ Module.register("MMM-SimplePlayer", {
 
 	},
 
-	getDom() {
+	getDom()
+	{
 		if (this.config.debug) console.log("GetDom");
-		var wrapper='';
-		if (this.showingMini)
-		{
-			wrapper = this.buildDom(this.config.miniplayercontrols);
-		}
-		else
-		{
+		let wrapper = document.getElementById("simple-player");
+
+		//if the wrapper doesnt exist then build it 
+
+		if (wrapper == null) {
 			wrapper = this.buildDom(this.config.defaultplayercontrols);
+		}
+		else {
+
+			if (this.showingMini) {
+				this.updateControls (this.config.miniplayercontrols);
+			}
+			else {
+				this.updateControls(this.config.defaultplayercontrols);
+			}
 		}
 
 		return wrapper;
+	},
+
+	updateControls(controlList)
+	{
+		//clear the relevant button area and add those required only
+
+		let controls = document.getElementById("controlButtons" + this.identifier);
+
+		if (!controls) { return; }
+
+		while (controls.firstChild) {
+			// The list is LIVE so it will re-index each call
+			controls.removeChild(controls.firstChild);
+		}
+
+		this.addButtons(controlList, controls);
+
 	},
 
 	addTooltip(buttonElement, toolTip)
@@ -624,7 +667,7 @@ Module.register("MMM-SimplePlayer", {
 		}
 	},
 
-	setupButton(action, icon, unDimmed, buttonElement)
+	setupButton(action, icon, unDimmed, buttonElement,visible=false)
 	{
 
 		//if button element passed always use it
@@ -637,7 +680,8 @@ Module.register("MMM-SimplePlayer", {
 			var buttonT = document.getElementById(action.toLowerCase() + "Button" + this.identifier);
 		}
 
-		buttonT.innerHTML = `<i id="${action}icon${this.identifier}" class="fas ${icon} ${unDimmed ? "" : "dimmedButton"}" aria-hidden="true"></i>`;
+		//use the order of classes to ensure that the undimmed comes at the correct point
+		buttonT.innerHTML = `<i id="${action}icon${this.identifier}" class="fas ${unDimmed ? "" : "dimmedButton"} controlButton ${icon}" aria-hidden="true"></i>`;
 
 		this.addTooltip(buttonT, action);
 
@@ -756,9 +800,7 @@ Module.register("MMM-SimplePlayer", {
 
 			case "MiniPlayer":
 				this.showingMini = !this.showingMini;
-				this.reset(); //here we clear everything out and start from scratch in terms of servers and loaded DLNA data
 				this.updateDom();
-				this.startAudio();
 				return;
 
 			case "ended":
@@ -878,7 +920,7 @@ Module.register("MMM-SimplePlayer", {
 				return;
 
 			case "DLNA":
-				if (!this.config.showDLNA) { return; }
+				if (!this.config.showDLNA) { return;}
 				this.showingDLNA = !this.showingDLNA;
 				this.setupButton(action, this.iconMap[action][0], this.showingDLNA, null);
 				//now tell node helper to toggle the DLNA playlist depending on the showingDLNA state
@@ -959,11 +1001,13 @@ Module.register("MMM-SimplePlayer", {
 		}
 	},
 
-	notificationReceived(notification) {
+	notificationReceived(notification, payload, sender)
+	{
 		//console.log(notification);
 		if (notification === "PAGE_CHANGED") {
 			this.updateDom();
 		}
+
 	},
 
 	seededShuffleRange(a, b, seed = Date.now()) {

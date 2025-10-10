@@ -159,8 +159,8 @@
 }
 
 .dimmedButton {
-  opacity: 0.5;
-}
+  opacity: 0.5 !important;
+  }
 
 .track-info {
   width: 100%;
@@ -227,6 +227,10 @@
   height: 100%;
 }
 
+.SP-button-transparent {
+  opacity: 0.05; /* Default semi-transparent state */
+}
+
 .SP-button-overlay {
   /*position: absolute;
   bottom: 0;
@@ -237,7 +241,7 @@
   z-index: 10; /* ensure it overlays the canvas */
   background: rgba(0, 0, 0, 0.3); /* optional: semi-transparent background */
   border-radius: 4px;
-  opacity: 0.05; /* Default semi-transparent state */
+
   transition: opacity 0.3s ease-in-out; /* Smooth fade effect */
 }
 
@@ -269,3 +273,12 @@
   .SP-button-overlay button:hover {
     background-color: #fff;
   }
+
+.controlButton {
+  transition: opacity 0.3s ease;
+  opacity: 1;
+}
+  .controlButton.hide {
+    opacity: 0;
+  }
+

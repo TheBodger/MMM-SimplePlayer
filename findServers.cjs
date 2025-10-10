@@ -5,7 +5,8 @@ const https = require('https');
 const { parse } = require('url');
 const { StringDecoder } = require('string_decoder');
 const { DOMParser } = require('xmldom'); // Optional if you allow small non-network dependency
-const { Client } = require('node-ssdp-js');
+//const { Client } = require('node-ssdp-js');
+const { Client } = require('./SSDP/node-ssdp-js');
 //const browseServer = require('dlna-browser-utils');
 const browseServer = require('./DLNAUtils/DLNA-Browser.js');
 

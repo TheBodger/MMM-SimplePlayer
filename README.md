@@ -278,9 +278,9 @@ If slideshow controls are enabled, then when the mouse is moved over the slidesh
 
 ## Comments
 
-As the simplePlayer always starts with either the local tracks or a local playlist, by entering the DLNA playlist name into the config option for playlistName then the previously saved DLNA playlist will start playing immediately.
+As the simplePlayer can always starts with either the local tracks or a local playlist, by entering the DLNA playlist name into the config option for playlistName then the previously saved DLNA playlist will start playing immediately.
 
-If the behaviour of the module isn't as expected, check that folders and files are always within a folder path that includes the musicDirectory value, that the DLNA Server(s) are visible, and that the music is off a type supported by the HTML audio player (the supportedAudioExt config option default shows the type and the extension these files must be) If this does'nt resolve the problem, raise an error report in github with a copy of the config used, and details of the where the music is, track details and names, and how the MagicMirror is run and on what OS/platform.
+If the behaviour of the module isn't as expected, check that folders and files are always within a folder path that includes the musicDirectory value, that the DLNA Server(s) are visible, and that the music is of a type supported by the HTML audio player (the supportedAudioExt config option default shows the type and the extension these files must be) If this does'nt resolve the problem, raise an error report in github with a copy of the config used, and details of the where the music is, track details and names, and how the MagicMirror is run and on what OS/platform.
 
 Additional capabilities may be added, including showing all Album Images, supporting external control notifications and alternative controls layout.
 

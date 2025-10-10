@@ -241,7 +241,6 @@
   z-index: 10; /* ensure it overlays the canvas */
   background: rgba(0, 0, 0, 0.3); /* optional: semi-transparent background */
   border-radius: 4px;
-
   transition: opacity 0.3s ease-in-out; /* Smooth fade effect */
 }
 
@@ -271,7 +270,7 @@
   }
 
   .SP-button-overlay button:hover {
-    background-color: #fff;
+    background-color: rgba(200, 200, 200, 0.3);
   }
 
 .controlButton {

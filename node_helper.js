@@ -481,7 +481,7 @@ module.exports = NodeHelper.create({
 		const requestId = this.generateUniqueId(); // Unique per request
 		this.requestRegistry[requestId] = identifier;
 
-		console.log("Request ID:", requestId, "Identifier:", identifier, "  ", JSON.stringify(this.requestRegistry) );
+		//console.log("Request ID:", requestId, "Identifier:", identifier, "  ", JSON.stringify(this.requestRegistry) );
 
 		findServers(identifier,(err, result, identifier) => {
 			
@@ -650,6 +650,8 @@ module.exports = NodeHelper.create({
 
 		if (!payload) { return; }
 
+		let common = missingMetaData;
+
 		if (payload.toLowerCase().startsWith('http')) {
 
 			(async () => {
@@ -660,11 +662,12 @@ module.exports = NodeHelper.create({
 
 					// Extract the Content-Length header and convert it to a number
 					const contentLength = response.headers.get('Content-Length');
-					if (!contentLength) {
+					if (!contentLength)
+					{
 						missingMetaData.title = payload;
-						const common = missingMetaData;
 					}
-					else {
+					else
+					{
 						const size = contentLength ? parseInt(contentLength, 10) : undefined;
 
 						// Parse the metadata from the web stream
@@ -672,10 +675,12 @@ module.exports = NodeHelper.create({
 							mimeType: response.headers.get('Content-Type'),
 							size // Important to pass the content-length
 						});
-						const common = metadata.common || missingMetaData;
+						common = metadata.common || missingMetaData;
 					}
 					this.sendSocketNotification(globalIdentifier +">"+ "METADATA_RESULT", { common });
-				} catch (error) {
+				}
+				catch (error)
+				{
 					console.error('Error parsing metadata:', error.message);
 					this.sendSocketNotification(globalIdentifier +">"+ "METADATA_RESULT", { common: missingMetaData });
 				}

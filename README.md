@@ -1,6 +1,6 @@
 # MMM-SimplePlayer
 
-This magic mirror module will enable the user to play music, show Images in a slideShow, control playback through a mouse or touchscreen and view details of the Track playing. It will also SOON include the ButternChurn visuliser.
+This magic mirror module will enable the user to play music, show Images in a slideShow, control playback through a mouse or touchscreen and view details of the Track playing. It will also includes the ButternChurn audio visualiser.
 
 Tracks can be played from either:
 ```
